@@ -1,0 +1,36 @@
+{
+  "name": "angular-demos",
+  "version": "0.0.1",
+  "description": "Rapid Prototyping Backend with Angular Seed",
+  "main": "index.html",
+  "scripts": {
+    "test": "backend.py --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/totalknowledge/angular-demos.git"
+  },
+  "keywords": [
+    "Python",
+    "Cyclone",
+    "Angular2",
+    "Angular",
+    "RAD",
+    "Rapid",
+    "Asynchronous"
+  ],
+  "author": "Bryan Patrick Coleman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/totalknowledge/angular-demos/issues"
+  },
+  "homepage": "https://github.com/totalknowledge/angular-demos#readme",
+  "dependencies": {
+    "angular2": "^2.0.0-beta.3",
+    "es6-promise": "^3.0.2",
+    "es6-shim": "^0.33.13",
+    "reflect-metadata": "^0.1.2",
+    "rxjs": "^5.0.0-beta.0",
+    "zone.js": "^0.5.11"
+  }
+}
