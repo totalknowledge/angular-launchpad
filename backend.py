@@ -125,7 +125,8 @@ if __name__ == "__main__":
 		os.makedirs("pickle_jar")
 
 	application = cyclone.web.Application([
-		(r"/ws/(.*)", WebServiceHandler),
+		(r"/api/v0/(.*)", WebServiceHandler),
+		(r"/api/(.*)", WebServiceHandler),
 		(r"/(.*)", MainHandler)
 	])
 
