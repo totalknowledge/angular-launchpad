@@ -4,7 +4,10 @@
   "description": "Rapid Prototyping Backend with Angular Seed",
   "main": "index.html",
   "scripts": {
-    "test": "backend.py --test"
+    "tsc": "tsc",
+    "tsc:w": "tsc -w",
+    "backend": "backend.py",
+    "start": "concurrent \"npm run tsc:w\" \"npm run backend\" "
   },
   "repository": {
     "type": "git",
@@ -27,10 +30,15 @@
   "homepage": "https://github.com/totalknowledge/angular-demos#readme",
   "dependencies": {
     "angular2": "^2.0.0-beta.3",
+    "systemjs": "0.19.6",
     "es6-promise": "^3.0.2",
     "es6-shim": "^0.33.13",
     "reflect-metadata": "0.1.2",
     "rxjs": "5.0.0-beta.0",
     "zone.js": "0.5.11"
+  },
+  "devDependencies": {
+  "concurrently": "^1.0.0",
+  "typescript": "^1.7.5"
   }
 }
