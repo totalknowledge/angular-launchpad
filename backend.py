@@ -6,118 +6,99 @@ import cyclone.web
 from twisted.internet import reactor
 from twisted.python import log
 
-def getPickle(fp):
-	try:
-		rfile = open(fp, 'rb')
-		rfile_contents = cPickle.load(rfile)
-		rfile.close()
-		return rfile_contents
-	except EOFError:
-		return {"nextval":100,
-				"data":{}
-			   }
-
-def savePickle(fp, obj):
-	wfile = open(fp, 'wb')
-	wfile.write(cPickle.dumps(obj, 2))
-	wfile.close()
+class PickleJar():
+	def __init__(self, path):
+		self.id = 0
+		self.path_info = path.split('/')
+		if len(self.path_info) > 1:
+			self.id = self.path_info[1]
+		self.collection = self.path_info[0]
+		self.file_path = 'pickle_jar/' + self.collection + '.pickle'
+		open(self.file_path, 'a+').close()
+	def getID(self):
+		return self.id
+	def getPickle(self):
+		try:
+			self.file_buffer = open(self.file_path, 'rb')
+			self.collection_contents = cPickle.load(self.file_buffer)
+			self.file_buffer.close()
+		except EOFError:
+			self.collection_contents = {"nextval":100, "data":{}}
+		return self.collection_contents
+	def savePickle(self, obj):
+		self.file_buffer = open(self.file_path, 'wb')
+		self.file_buffer.write(cPickle.dumps(obj, 2))
+		self.file_buffer.close()
 
 class MainHandler(cyclone.web.RequestHandler):
     def get(self):
-        self.write("Hello, world get")
-    def post(self):
-        self.write("Hello, world post")
-    def put(self):
-        self.write("Hello, world put")
-    def delete(self):
-        self.write("Hello, world delete")
-    def patch(self):
-        self.write("Hello, world patch")
+		with open('index.html', 'r') as request_page:
+			self.write(request_page.read())
 
 class WebServiceHandler(cyclone.web.RequestHandler):
     def get(self, path):
 		# Grab the REQUEST_METHOD collection and id if exists from the Request
-		id = 0
-		path_info = path.split('/')
-
-		collection = path_info[0]
-		file_path = 'pickle_jar/' + collection + '.pickle'
-		open(file_path, 'a+').close()
-
-		if len(path_info) > 1:
-			id = path_info[1]
-
-		if id:
-			result = getPickle(file_path)
+		pkl_jr = PickleJar(path)
+		pkl_id = pkl_jr.getID()
+		if pkl_id:
 			try:
-				response_obj = {"data":{str(id):result["data"][str(id)]}}
+				result = pkl_jr.getPickle()
+				response_obj = {"data":{str(pkl_id):result["data"][str(pkl_id)]}}
 				self.write(response_obj)
 			except:
+				response_obj = {"message":"Record not found."}
 				self.set_status(404)
 		else:
-			response_obj = {"data":getPickle(file_path)["data"]}
+			response_obj = {"data":pkl_jr.getPickle()["data"]}
 			self.write(response_obj)
 
     def post(self, path):
-		path_info = path.split('/')
+		pkl_jr = PickleJar(path)
+		save_obj = pkl_jr.getPickle()
+		new_id = save_obj["nextval"]
 
-		collection = path_info[0]
-		file_path = 'pickle_jar/' + collection + '.pickle'
-		open(file_path, 'a+').close()
-
-		save_obj = getPickle(file_path)
-		id = save_obj["nextval"]
-		save_obj["data"][str(id)] = json.loads(self.request.body)
+		save_obj["data"][str(new_id)] = json.loads(self.request.body)
 		save_obj["nextval"] = save_obj["nextval"] + 1
-		self.set_status(201)
-		response_obj = {"data":{str(id):save_obj["data"][str(id)]}}
-		savePickle(file_path, save_obj)
+
+		try:
+			pkl_jr.savePickle(save_obj)
+			response_obj = {"data":{str(new_id):save_obj["data"][str(new_id)]}}
+			self.set_status(201)
+		except:
+			response_obj = {"message":"Error saving record."}
+			self.set_status(500)
 		self.write(response_obj)
 
     def put(self, path):
-		id=0
-		path_info = path.split('/')
-		collection = path_info[0]
-		file_path = 'pickle_jar/' + collection + '.pickle'
-		open(file_path, 'a+').close()
+		pkl_jr = PickleJar(path)
+		pkl_id = pkl_jr.getID()
 
-		if len(path_info) > 1:
-			id = path_info[1]
+		save_obj = pkl_jr.getPickle()
+		save_obj["data"][str(pkl_id)] = json.loads(self.request.body)
 
-		save_obj = getPickle(file_path)
-		save_obj["data"][str(id)] = json.loads(self.request.body)
-
-		response_obj = {"data":{str(id):save_obj["data"][str(id)]}}
-		savePickle(file_path, save_obj)
+		response_obj = {"data":{str(pkl_id):save_obj["data"][str(pkl_id)]}}
+		pkl_jr.savePickle(save_obj)
 		self.write(response_obj)
 
     def delete(self, path):
-		id=0
-		path_info = path.split('/')
+		pkl_jr = PickleJar(path)
+		pkl_id = pkl_jr.getID()
 
-		collection = path_info[0]
-		file_path = 'pickle_jar/' + collection + '.pickle'
-		open(file_path, 'a+').close()
-
-		if len(path_info) > 1:
-			id = path_info[1]
-
-		if id:
-			save_obj = getPickle(file_path)
+		if pkl_id:
+			save_obj = pkl_jr.getPickle()
 			try:
-				del save_obj["data"][str(id)]
-				savePickle(file_path, save_obj)
+				del save_obj["data"][str(pkl_id)]
+				pkl_jr.savePickle(save_obj)
 				self.set_status(204)
 			except:
 				self.set_status(404)
 		else:
-			savePickle(file_path, {"nextval":100,
-								   "data":{}
-								  })
+			pkl_jr.savePickle({"nextval":100, "data":{} })
 			self.set_status(204)
 
     def patch(self, path):
-        self.write("Not Implemented")
+		self.set_status(501)
+		self.write({"message":"Requested method not implemented."})
 
 if __name__ == "__main__":
 
