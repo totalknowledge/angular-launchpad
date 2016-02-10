@@ -115,8 +115,16 @@ class WebServiceHandler(cyclone.web.RequestHandler):
 			self.set_status(204)
 
     def patch(self, path):
-		self.set_status(501)
-		self.write({"message":"Requested method not implemented."})
+		pkl_jr = PickleJar(path)
+		pkl_id = pkl_jr.getID()
+		save_obj = pkl_jr.getPickle()
+		temp_obj = save_obj["data"][str(pkl_id)]
+		merge_obj = json.loads(self.request.body)
+		temp_obj.update(merge_obj)
+		save_obj["data"][str(pkl_id)] = temp_obj
+		response_obj = {"data":{str(pkl_id):temp_obj}}
+		pkl_jr.savePickle(save_obj)
+		self.write(response_obj)
 
 if __name__ == "__main__":
 
