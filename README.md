@@ -13,9 +13,9 @@ Trying to figure out how to change the name.  This project is meant to be a rapi
 Clone the repository with "git clone https://github.com/totalknowledge/angular-demos.git"
 
 ### Additional setup steps
-pip install twisted
-pip install cyclone
-npm install
+* pip install twisted
+* pip install cyclone
+* npm install
 
 ## Starting Typescript Compiler and Backend Process
 npm start
