@@ -31,9 +31,21 @@ class PickleJar():
 		self.file_buffer.close()
 
 class MainHandler(cyclone.web.RequestHandler):
-    def get(self):
-		with open('index.html', 'r') as request_page:
-			self.write(request_page.read())
+    def get(self, path):
+		if path and (path != 'index.html' or path != 'index.py'):
+			if path.startswith('app/') or path.startswith('node_modules/'):
+				try:
+					with open(path, 'r') as request_page:
+						self.write(request_page.read())
+						self.set_status(200)
+				except:
+					self.set_status(404)
+			else:
+				self.set_status(403)
+		else:
+			with open('index.html', 'r') as request_page:
+				self.write(request_page.read())
+				self.set_status(200)
 
 class WebServiceHandler(cyclone.web.RequestHandler):
     def get(self, path):
@@ -107,8 +119,8 @@ if __name__ == "__main__":
 		os.makedirs("pickle_jar")
 
 	application = cyclone.web.Application([
-		(r"/", MainHandler),
-		(r"/ws/(.*)", WebServiceHandler)
+		(r"/ws/(.*)", WebServiceHandler),
+		(r"/(.*)", MainHandler)
 	])
 
 	log.startLogging(sys.stdout)
