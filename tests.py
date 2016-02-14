@@ -12,9 +12,10 @@ import backend
 
 class TestBaseClass(unittest.TestCase):
     """ asdfasdf """
-    def setUpClass(self):
+    @classmethod
+    def setUpClass(cls):
         """ Setup activities for Test Cases. """
-        self.known_values = {"nextval":103,
+        cls.known_values = {"nextval":103,
                              "data":{100:{"name":"Bob Smith", "age":23, "weight":"183 lbs"},
                                      101:{"name":"Jan Smith", "age":22, "weight":"123 lbs"},
                                      102:{"name":"Lucy Smith", "age":3, "weight":"23 lbs"}}}
@@ -27,9 +28,9 @@ class TestBaseClass(unittest.TestCase):
             (r"/(.*)", backend.MainHandler)
         ])
         file_buffer = open('pickle_jar/mock.pickle', 'wb')
-        file_buffer.write(cPickle.dumps(self.known_values, 2))
+        file_buffer.write(cPickle.dumps(cls.known_values, 2))
         file_buffer.close()
-        self.listener = reactor.listenTCP(8345, application)
+        cls.listener = reactor.listenTCP(8345, application)
 
     @defer.inlineCallbacks
     def fetchit(self, url, *args, **kwargs):
@@ -39,21 +40,22 @@ class TestBaseClass(unittest.TestCase):
                                           **kwargs)
         defer.returnValue(response)
 
-    def tearDownClass(self):
+    @classmethod
+    def tearDownClass(cls):
         """ Setup activities for Test Cases. """
         #os.remove('pickle_jar/mock.pickle')
-        self.listener.stopListening()
+        cls.listener.stopListening()
 
 
 class GetTest(TestBaseClass):
     """ asdfasdf """
     @defer.inlineCallbacks
-    def some_test_method(self):
+    def test_some_method(self):
         """ Setup activities for Test Cases. """
         res = yield self.fetchit('/api/v0/mock/')
         self.assertEquals(200, res.code)
 
-    def another_test(self):
+    def test_another(self):
         """ This is a test, my only test regressed """
         self.assertEquals(200, 200)
 
