@@ -11,14 +11,15 @@ from twisted.internet import reactor
 import backend
 
 class TestBaseClass(unittest.TestCase):
-    """ asdfasdf """
+    """ Base Class for Test Cases for Methods """
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(self):
         """ Setup activities for Test Cases. """
-        cls.known_values = {"nextval":103,
-                             "data":{100:{"name":"Bob Smith", "age":23, "weight":"183 lbs"},
-                                     101:{"name":"Jan Smith", "age":22, "weight":"123 lbs"},
-                                     102:{"name":"Lucy Smith", "age":3, "weight":"23 lbs"}}}
+        self.known_values = {"nextval":103,
+                             "schema":{},
+                             "data":{100:{"id":100, "name":"Bob Smith", "age":23, "weight":"183 lbs"},
+                                     101:{"id":101, "name":"Jan Smith", "age":22, "weight":"123 lbs"},
+                                     102:{"id":102, "name":"Lucy Smith", "age":3, "weight":"23 lbs"}}}
         # Make pickle_jar if it doesn't exist
         if not os.path.exists("pickle_jar"):
             os.makedirs("pickle_jar")
@@ -28,37 +29,56 @@ class TestBaseClass(unittest.TestCase):
             (r"/(.*)", backend.MainHandler)
         ])
         file_buffer = open('pickle_jar/mock.pickle', 'wb')
-        file_buffer.write(cPickle.dumps(cls.known_values, 2))
+        file_buffer.write(cPickle.dumps(self.known_values, 2))
         file_buffer.close()
-        cls.listener = reactor.listenTCP(8345, application)
+        self.listener = reactor.listenTCP(8345, application)
 
     @defer.inlineCallbacks
     def fetchit(self, url, *args, **kwargs):
-        """ Setup activities for Test Cases. """
-        response = yield httpclient.fetch(('http://localhost:8345'+url),
-                                          *args,
-                                          **kwargs)
+        """ Helper Function for returning HTTP requests. """
+        response = yield httpclient.fetch(('http://localhost:1234'+url),
+                                             *args,
+                                             **kwargs)
         defer.returnValue(response)
 
     @classmethod
-    def tearDownClass(cls):
-        """ Setup activities for Test Cases. """
+    def tearDownClass(self):
+        """ Teardown activities for Test Cases. """
         #os.remove('pickle_jar/mock.pickle')
-        cls.listener.stopListening()
+        self.listener.stopListening()
 
 
 class GetTest(TestBaseClass):
-    """ asdfasdf """
+    """ GET api method test. """
+    # Not working checking http://cyclone.io/documentation/httpclient.html
+    # Defered https://twistedmatrix.com/documents/current/api/twisted.internet.defer.html#inlineCallbacks
     @defer.inlineCallbacks
-    def test_some_method(self):
-        """ Setup activities for Test Cases. """
+    def test_get_collection(self):
+        """ Get collection test. """
         res = yield self.fetchit('/api/v0/mock/')
+        self.assertEquals(200, res.code, msg="GET Collection Request returned bad code.")
+        # Need check for res.body
+
+    @defer.inlineCallbacks
+    def test_get_collection(self):
+        """ Get collection test. """
+        res = yield self.fetchit('/api/v0/mocks/')
+        self.assertEquals(200, res.code, msg="GET Collection Request returned bad code.")
+        # Need check for res.body being empty [ ]
+
+    @defer.inlineCallbacks
+    def test_get_record(self):
+        """ Get record test. """
+        res = yield self.fetchit('/api/v0/mock/101')
         self.assertEquals(200, res.code)
+        # Need check for res.body
 
-    def test_another(self):
-        """ This is a test, my only test regressed """
-        self.assertEquals(200, 200)
-
+    @defer.inlineCallbacks
+    def test_get_record(self):
+        """ Get record test expected failure. """
+        res = yield self.fetchit('/api/v0/mock/201')
+        self.assertEquals(404, res.code)
+        # Need check for res.body error message
 
 
 if __name__ == "__main__":

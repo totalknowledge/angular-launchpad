@@ -2,3 +2,4 @@ app
 pickle_jar
 node_modules
 npm-debug.log
+*.pyc
