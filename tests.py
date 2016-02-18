@@ -1,85 +1,116 @@
-#!/usr/bin/env python
-""" sadkjfhkjd askdjfk """
+#!/usr/bin/env trial
 
-import unittest
+""" 
+A trial unittest setup for testing the backend.py application. 
+Base on a reply on stackoverflow about unittesting cyclone apps
+http://stackoverflow.com/questions/12807992/how-do-i-write-tests-for-cyclone-in-the-style-of-tornado/14977944#14977944
+"""
+
 import os
 import cPickle
+import json
+
 import cyclone.web
+from twisted.trial import unittest
+from twisted.internet import defer, reactor
 from cyclone import httpclient
-from twisted.internet import defer
-from twisted.internet import reactor
+
 import backend
 
-class TestBaseClass(unittest.TestCase):
-    """ Base Class for Test Cases for Methods """
-    @classmethod
-    def setUpClass(self):
-        """ Setup activities for Test Cases. """
-        self.known_values = {"nextval":103,
-                             "schema":{},
-                             "data":{100:{"id":100, "name":"Bob Smith", "age":23, "weight":"183 lbs"},
-                                     101:{"id":101, "name":"Jan Smith", "age":22, "weight":"123 lbs"},
-                                     102:{"id":102, "name":"Lucy Smith", "age":3, "weight":"23 lbs"}}}
-        # Make pickle_jar if it doesn't exist
-        if not os.path.exists("pickle_jar"):
-            os.makedirs("pickle_jar")
-        application = cyclone.web.Application([
+
+class BaseTestCase(unittest.TestCase):
+    """ Base class for Test Case methods. """
+
+    def setUp(self, *args, **kwargs):
+        """ Setup activities for test cases. """
+
+        self._port = 8345
+        self._app = self.get_app()
+        self._listener = None
+
+        # Ensure the picklejar exists and fill it with our known values
+        self.setup_pickle_jar()
+
+        # Create our app to use for our tests
+        if self._app:
+            self._listener = reactor.listenTCP(self._port, self._app)
+
+        return unittest.TestCase.setUp(self, *args, **kwargs)
+
+    def tearDown(self):
+        """ Teardown activities for test cases. """
+
+        if self._listener:
+            self._listener.stopListening()
+
+    def get_app(self):
+        """ Create an instance of our cyclone application. """
+
+        self._app = cyclone.web.Application([
             (r"/api/v0/(.*)", backend.WebServiceHandler),
             (r"/api/(.*)", backend.WebServiceHandler),
             (r"/(.*)", backend.MainHandler)
         ])
+
+        return self._app
+
+    def setup_pickle_jar(self):
+        """ Set up our pickle jar. """
+
+        if not os.path.exists("pickle_jar"):
+            os.makedirs("pickle_jar")
+
         file_buffer = open('pickle_jar/mock.pickle', 'wb')
-        file_buffer.write(cPickle.dumps(self.known_values, 2))
+        file_buffer.write(cPickle.dumps(self.get_known_values(), 2))
         file_buffer.close()
-        self.listener = reactor.listenTCP(8345, application)
+
+    def get_known_values(self):
+        """ Save our test values to the pickle jar. """
+
+        self._known_values = {"nextval":103,
+                         "schema":{},
+                         "data":{100:{"id":100, "name":"Bob Smith", "age":23, "weight":"183 lbs"},
+                                 101:{"id":101, "name":"Jan Smith", "age":22, "weight":"123 lbs"},
+                                 102:{"id":102, "name":"Lucy Smith", "age":3, "weight":"23 lbs"}}}
+
+        return self._known_values
 
     @defer.inlineCallbacks
-    def fetchit(self, url, *args, **kwargs):
-        """ Helper Function for returning HTTP requests. """
-        response = yield httpclient.fetch(('http://localhost:1234'+url),
-                                             *args,
-                                             **kwargs)
+    def fetch(self, url, *args, **kwargs):
+        """ Helper method to expose an easy method to fetch a url. """
+
+        response = yield httpclient.fetch('http://localhost:{}{}'.format(self._port, url), *args, **kwargs)
         defer.returnValue(response)
 
-    @classmethod
-    def tearDownClass(self):
-        """ Teardown activities for Test Cases. """
-        #os.remove('pickle_jar/mock.pickle')
-        self.listener.stopListening()
 
+class GetTest(BaseTestCase):
 
-class GetTest(TestBaseClass):
-    """ GET api method test. """
-    # Not working checking http://cyclone.io/documentation/httpclient.html
-    # Defered https://twistedmatrix.com/documents/current/api/twisted.internet.defer.html#inlineCallbacks
     @defer.inlineCallbacks
     def test_get_collection(self):
         """ Get collection test. """
-        res = yield self.fetchit('/api/v0/mock/')
-        self.assertEquals(200, res.code, msg="GET Collection Request returned bad code.")
+        res = yield self.fetch('/api/v0/mock/')
+        data_length = len(json.loads(res.body)['data'])
+        self.assertEquals(200, res.code, msg="Expect code 200, got {}".format(res.code))
+        self.assertEquals(3, data_length, msg="Expected data length of 3, got {}".format(data_length))
         # Need check for res.body
 
     @defer.inlineCallbacks
-    def test_get_collection(self):
-        """ Get collection test. """
-        res = yield self.fetchit('/api/v0/mocks/')
-        self.assertEquals(200, res.code, msg="GET Collection Request returned bad code.")
-        # Need check for res.body being empty [ ]
+    def test_get_empty_collection(self):
+        """ Get empty collection test. """
+        res = yield self.fetch('/api/v0/empty/')
+        data_length = len(json.loads(res.body)['data'])
+        self.assertEquals(200, res.code, msg="Expected code 200, got {}".format(res.code))
+        self.assertEqual(0, data_length, msg="Expeced data length of 0, got {}".format(data_length))
 
     @defer.inlineCallbacks
     def test_get_record(self):
         """ Get record test. """
-        res = yield self.fetchit('/api/v0/mock/101')
-        self.assertEquals(200, res.code)
+        res = yield self.fetch('/api/v0/mock/101/')
+        self.assertEquals(200, res.code, msg="Expected code 200, got {}".format(res.code))
         # Need check for res.body
 
     @defer.inlineCallbacks
-    def test_get_record(self):
-        """ Get record test expected failure. """
-        res = yield self.fetchit('/api/v0/mock/201')
-        self.assertEquals(404, res.code)
-        # Need check for res.body error message
-
-
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    def test_get_missing_record(self):
+        """ Get missing record test. """
+        res = yield self.fetch('/api/v0/mock/201/')
+        self.assertEquals(404, res.code, msg="ExpectedCode 404, got {}".format(res.code))
