@@ -86,6 +86,7 @@ class WebServiceHandler(cyclone.web.RequestHandler):
                 self.set_status(404)
         else:
             response_obj = {"data":pkl_jr.get_pickle()["data"].values()}
+            response_obj['data'].sort(key = lambda x: x['id'])
             self.set_header("Content-Type", "application/vnd.api+json")
             self.set_status(200)
             self.write(response_obj)
