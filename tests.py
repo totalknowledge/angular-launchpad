@@ -72,10 +72,10 @@ class BaseTestCase(unittest.TestCase):
         """ Save our test values to the pickle jar. """
 
         self._known_values = {"nextval":103,
-                         "schema":{},
-                         "data":{100:{"id":100, "name":"Bob Smith", "age":23, "weight":"183 lbs"},
-                                 101:{"id":101, "name":"Jan Smith", "age":22, "weight":"123 lbs"},
-                                 102:{"id":102, "name":"Lucy Smith", "age":3, "weight":"23 lbs"}}}
+                              "schema":{},
+                              "data":{100:{"id":"100", "type":"mock", "name":"Bob Smith", "age":23, "weight":"183 lbs"},
+                                      101:{"id":"101", "type":"mock", "name":"Jan Smith", "age":22, "weight":"123 lbs"},
+                                      102:{"id":"102", "type":"mock", "name":"Lucy Smith", "age":3, "weight":"23 lbs"}}}
 
         return self._known_values
 
@@ -98,8 +98,8 @@ class GetTest(BaseTestCase):
         self.assertEquals(200, res.code, msg="Expect code 200, got {}".format(res.code))
         self.assertEquals(3, data_length, msg="Expected data length of 3, got {}".format(data_length))
         self.assertEquals(self.get_known_values()['data'][100]['name'],
-                          data_body['100']['name'],
-                          msg="Expected {}, got {}".format(self.get_known_values()['data'][100]['name'], data_body['100']['name']))
+                          data_body[0]["name"],
+                          msg="Expected {}, got {}".format(self.get_known_values()['data'][100]['name'], data_body[0]["name"]))
 
     @defer.inlineCallbacks
     def test_get_empty_collection(self):
@@ -112,7 +112,7 @@ class GetTest(BaseTestCase):
     @defer.inlineCallbacks
     def test_get_record(self):
         """ Get record test. """
-        res = yield self.fetch('/api/v0/mock/101/')
+        res = yield self.fetch('/api/v0/mock/100')
         self.assertEquals(200, res.code, msg="Expected code 200, got {}".format(res.code))
         # Need check for res.body
 
@@ -130,7 +130,6 @@ class DeleteTest(BaseTestCase):
         """ Delete record test. """
         res = yield self.fetch('/api/v0/mock/101/', method='DELETE')
         self.assertEquals(204, res.code, msg="Expected code 204, got {}".format(res.code))
-        # Need check for res.body
 
     @defer.inlineCallbacks
     def test_delete_missing_record(self):

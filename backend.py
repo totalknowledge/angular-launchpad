@@ -24,6 +24,9 @@ class PickleJar(object):
     def get_id(self):
         """ Return the ID of the record if any. """
         return self.record_id
+    def get_type(self):
+        """ Retrive collection type """
+        return self.collection
     def get_pickle(self):
         """ Retrive collection from disk. """
         try:
@@ -74,26 +77,31 @@ class WebServiceHandler(cyclone.web.RequestHandler):
         if pkl_id:
             try:
                 result = pkl_jr.get_pickle()
-                response_obj = {"data":{str(pkl_id):result["data"][str(pkl_id)]}}
+                response_obj = {"data":result["data"][str(pkl_id)]}
+                self.set_header("Content-Type", "application/vnd.api+json")
+                self.set_status(200)
                 self.write(response_obj)
             except:
                 response_obj = {"message":"Record not found."}
                 self.set_status(404)
         else:
-            response_obj = {"data":pkl_jr.get_pickle()["data"]}
+            response_obj = {"data":pkl_jr.get_pickle()["data"].values()}
+            self.set_header("Content-Type", "application/vnd.api+json")
+            self.set_status(200)
             self.write(response_obj)
 
     def post(self, path):
         pkl_jr = PickleJar(path)
         save_obj = pkl_jr.get_pickle()
         new_id = save_obj["nextval"]
-
-        save_obj["data"][str(new_id)] = json.loads(self.request.body)
+        record = json.loads(self.request.body)
+        record.update({"id":save_obj["nextval"],"type":pkl_jr.get_type()})
+        save_obj["data"][str(new_id)] = record
         save_obj["nextval"] = save_obj["nextval"] + 1
 
         try:
             pkl_jr.save_pickle(save_obj)
-            response_obj = {"data":{str(new_id):save_obj["data"][str(new_id)]}}
+            response_obj = {"data":save_obj["data"][str(new_id)]}
             self.set_status(201)
         except:
             response_obj = {"message":"Error saving record."}
