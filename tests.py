@@ -1,9 +1,13 @@
 #!/usr/bin/env trial
 
-""" 
-A trial unittest setup for testing the backend.py application. 
+"""
+A trial unittest setup for testing the backend.py application.
 Base on a reply on stackoverflow about unittesting cyclone apps
 http://stackoverflow.com/questions/12807992/how-do-i-write-tests-for-cyclone-in-the-style-of-tornado/14977944#14977944
+
+Methods tested:
+* GET
+* DELETE
 """
 
 import os
@@ -89,10 +93,13 @@ class GetTest(BaseTestCase):
     def test_get_collection(self):
         """ Get collection test. """
         res = yield self.fetch('/api/v0/mock/')
-        data_length = len(json.loads(res.body)['data'])
+        data_body = json.loads(res.body)['data']
+        data_length = len(data_body)
         self.assertEquals(200, res.code, msg="Expect code 200, got {}".format(res.code))
         self.assertEquals(3, data_length, msg="Expected data length of 3, got {}".format(data_length))
-        # Need check for res.body
+        self.assertEquals(self.get_known_values()['data'][100]['name'],
+                          data_body['100']['name'],
+                          msg="Expected {}, got {}".format(self.get_known_values()['data'][100]['name'], data_body['100']['name']))
 
     @defer.inlineCallbacks
     def test_get_empty_collection(self):
@@ -114,3 +121,31 @@ class GetTest(BaseTestCase):
         """ Get missing record test. """
         res = yield self.fetch('/api/v0/mock/201/')
         self.assertEquals(404, res.code, msg="ExpectedCode 404, got {}".format(res.code))
+
+
+class DeleteTest(BaseTestCase):
+
+    @defer.inlineCallbacks
+    def test_delete_record(self):
+        """ Delete record test. """
+        res = yield self.fetch('/api/v0/mock/101/', method='DELETE')
+        self.assertEquals(204, res.code, msg="Expected code 204, got {}".format(res.code))
+        # Need check for res.body
+
+    @defer.inlineCallbacks
+    def test_delete_missing_record(self):
+        """ Delete missing record test. """
+        res = yield self.fetch('/api/v0/mock/201/', method='DELETE')
+        self.assertEquals(404, res.code, msg="ExpectedCode 404, got {}".format(res.code))
+
+    @defer.inlineCallbacks
+    def test_delete_collection(self):
+        """ Delete collection test. """
+        res = yield self.fetch('/api/v0/mock/', method='DELETE')
+        self.assertEquals(204, res.code, msg="Expect code 204, got {}".format(res.code))
+
+    @defer.inlineCallbacks
+    def test_delete_empty_collection(self):
+        """ Delete empty collection test. """
+        res = yield self.fetch('/api/v0/empty/', method='DELETE')
+        self.assertEquals(204, res.code, msg="Expected code 204, got {}".format(res.code))
