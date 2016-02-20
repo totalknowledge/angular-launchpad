@@ -25,6 +25,14 @@ import backend
 class BaseTestCase(unittest.TestCase):
     """ Base class for Test Case methods. """
 
+    def __init__(self, methodName):
+        self._port = None
+        self._app = None
+        self._listener = None
+        self._known_values = None
+
+        super(unittest.TestCase, self).__init__(methodName)
+
     def setUp(self, *args, **kwargs):
         """ Setup activities for test cases. """
 
@@ -49,12 +57,12 @@ class BaseTestCase(unittest.TestCase):
 
     def get_app(self):
         """ Create an instance of our cyclone application. """
-
-        self._app = cyclone.web.Application([
-            (r"/api/v0/(.*)", backend.WebServiceHandler),
-            (r"/api/(.*)", backend.WebServiceHandler),
-            (r"/(.*)", backend.MainHandler)
-        ])
+        if not self._app:
+            self._app = cyclone.web.Application([
+                (r"/api/v0/(.*)", backend.WebServiceHandler),
+                (r"/api/(.*)", backend.WebServiceHandler),
+                (r"/(.*)", backend.MainHandler)
+            ])
 
         return self._app
 
@@ -64,18 +72,30 @@ class BaseTestCase(unittest.TestCase):
         if not os.path.exists("pickle_jar"):
             os.makedirs("pickle_jar")
 
-        file_buffer = open('pickle_jar/mock.pickle', 'wb')
-        file_buffer.write(cPickle.dumps(self.get_known_values(), 2))
+        for collection, data in self.get_known_values().iteritems():
+            self.save_pickle(collection, data)
+
+    def save_pickle(self, collection, data):
+        """ Helper method to pickle our mock data to a file. """
+        file_buffer = open('pickle_jar/{}.pickle'.format(collection), 'wb')
+        file_buffer.write(cPickle.dumps(data, 2))
         file_buffer.close()
 
     def get_known_values(self):
-        """ Save our test values to the pickle jar. """
+        """ Return our mock values for all tests. """
 
-        self._known_values = {"nextval":103,
-                              "schema":{},
-                              "data":{100:{"id":"100", "type":"mock", "name":"Bob Smith", "age":23, "weight":"183 lbs"},
-                                      101:{"id":"101", "type":"mock", "name":"Jan Smith", "age":22, "weight":"123 lbs"},
-                                      102:{"id":"102", "type":"mock", "name":"Lucy Smith", "age":3, "weight":"23 lbs"}}}
+        if not self._known_values:
+            self._known_values = {
+                'mock': {
+                    'nextval': '103',
+                    'schema': {},
+                    'data': {
+                        '100': {'id': '100', 'name': 'Bob Smith', 'age': 23, 'weight': '183 lbs'},
+                        '101': {'id': '101', 'name': 'Jan Smith', 'age': 22, 'weight': '123 lbs'},
+                        '102': {'id': '102', 'name': 'Lucy Smith', 'age': 3, 'weight': '23 lbs'},
+                    }
+                }
+            }
 
         return self._known_values
 
@@ -97,9 +117,9 @@ class GetTest(BaseTestCase):
         data_length = len(data_body)
         self.assertEquals(200, res.code, msg="Expect code 200, got {}".format(res.code))
         self.assertEquals(3, data_length, msg="Expected data length of 3, got {}".format(data_length))
-        self.assertEquals(self.get_known_values()['data'][100]['name'],
+        self.assertEquals(self.get_known_values()['mock']['data']['100']['name'],
                           data_body[0]["name"],
-                          msg="Expected {}, got {}".format(self.get_known_values()['data'][100]['name'], data_body[0]["name"]))
+                          msg="Expected {}, got {}".format(self.get_known_values()['mock']['data']['100']['name'], data_body[0]["name"]))
 
     @defer.inlineCallbacks
     def test_get_empty_collection(self):
