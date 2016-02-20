@@ -6,5 +6,5 @@ System.config({
     }
   }
 });
-System.import('app/main/main')
+System.import('/app/main/main.js')
       .then(null, console.error.bind(console));
