@@ -1,6 +1,6 @@
 import json
 
-from backend.backends.picklejar import PickleJar
+from launchpad.adapters.picklejar import PickleJar
 
 import cyclone.web
 

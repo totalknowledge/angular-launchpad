@@ -1,12 +1,12 @@
 import os
 
-from backend import settings
+from launchpad import settings
 
 import cyclone.web
 
 
 class MainHandler(cyclone.web.RequestHandler):
-    """ Return files from app and node_modules otherwise return index.html"""    
+    """ Return files from app and node_modules otherwise return index.html"""
 
     @staticmethod
     def get_file_path(path):

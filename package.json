@@ -6,8 +6,8 @@
   "scripts": {
     "tsc": "tsc",
     "tsc:w": "tsc -w",
-    "backend": "./backend.py",
-    "test": "./test.py",
+    "backend": "./backend.py || backend.py",
+    "test": "./test.py || trial.py test.py",
     "start": "concurrent \"npm run tsc:w\" \"npm run backend\" "
   },
   "repository": {

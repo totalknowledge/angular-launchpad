@@ -19,7 +19,7 @@ from twisted.trial import unittest
 from twisted.internet import defer, reactor
 from cyclone import httpclient
 
-from backend import app
+from launchpad import app
 
 
 class BaseTestCase(unittest.TestCase):
