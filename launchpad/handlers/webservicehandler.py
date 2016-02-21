@@ -15,18 +15,18 @@ class WebServiceHandler(cyclone.web.RequestHandler):
             try:
                 result = pkl_jr.get_pickle()
                 response_obj = {"data":result["data"][str(pkl_id)]}
-                self.set_header("Content-Type", "application/vnd.api+json")
                 self.set_status(200)
                 self.write(response_obj)
+                self.set_header("Content-Type", "application/vnd.api+json")
             except:
                 response_obj = {"message":"Record not found."}
                 self.set_status(404)
         else:
             response_obj = {"data":pkl_jr.get_pickle()["data"].values()}
             response_obj['data'].sort(key = lambda x: x['id'])
-            self.set_header("Content-Type", "application/vnd.api+json")
             self.set_status(200)
             self.write(response_obj)
+            self.set_header("Content-Type", "application/vnd.api+json")
 
     def post(self, path):
         pkl_jr = PickleJar(path)
@@ -84,3 +84,24 @@ class WebServiceHandler(cyclone.web.RequestHandler):
         response_obj = {"data":{str(pkl_id):temp_obj}}
         pkl_jr.save_pickle(save_obj)
         self.write(response_obj)
+
+    def head(self, path):
+        pkl_jr = PickleJar(path)
+        pkl_id = pkl_jr.get_id()
+        if pkl_id:
+            try:
+                result = pkl_jr.get_pickle()
+                response_obj = {"data":result["data"][str(pkl_id)]}
+                self.set_header("Content-Type", "application/vnd.api+json")
+                self.set_status(200)
+            except:
+                response_obj = {"message":"Record not found."}
+                self.set_status(404)
+        else:
+            response_obj = {"data":pkl_jr.get_pickle()["data"].values()}
+            self.set_header("Content-Type", "application/vnd.api+json")
+            self.set_status(200)
+
+    def options(self, path):
+        self.set_status(200)
+        self.set_header("Allow", "HEAD, GET, PUT, PATCH, POST, DELETE, HEAD, OPTIONS")
