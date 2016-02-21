@@ -65,17 +65,9 @@ class BaseTestCase(unittest.TestCase):
     def setup_pickle_jar(self):
         """ Set up our pickle jar. """
 
-        if not os.path.exists("pickle_jar"):
-            os.makedirs("pickle_jar")
-
+        app.db._pickle_jar_dir = 'pickle_jar'
         for collection, data in self.get_known_values().iteritems():
-            self.save_pickle(collection, data)
-
-    def save_pickle(self, collection, data):
-        """ Helper method to pickle our mock data to a file. """
-        file_buffer = open('pickle_jar/{}.pickle'.format(collection), 'wb')
-        file_buffer.write(cPickle.dumps(data, 2))
-        file_buffer.close()
+            app.db.write_pickle(collection, data)
 
     def get_known_values(self):
         """ Return our mock values for all tests. """

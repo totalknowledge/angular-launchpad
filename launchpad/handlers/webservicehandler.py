@@ -1,106 +1,86 @@
 import json
 
-from launchpad.adapters.picklejar import PickleJar
+from launchpad.app import db
 
 import cyclone.web
 
 
 class WebServiceHandler(cyclone.web.RequestHandler):
+
+    def parse_path(self, path):
+        self.record_id = 0
+        self.path_info = path.split('/')
+        if len(self.path_info) > 1:
+            self.record_id = self.path_info[1]
+        self.collection = self.path_info[0]
+
+        # return self.collection, self.record_id
+
     """ Return arbitrary api calls in json format. """
     def get(self, path):
-        # Grab the REQUEST_METHOD collection and id if exists from the Request
-        pkl_jr = PickleJar(path)
-        pkl_id = pkl_jr.get_id()
-        if pkl_id:
-            try:
-                result = pkl_jr.get_pickle()
-                response_obj = {"data":result["data"][str(pkl_id)]}
-                self.set_status(200)
-                self.write(response_obj)
-                self.set_header("Content-Type", "application/vnd.api+json")
-            except:
-                response_obj = {"message":"Record not found."}
-                self.set_status(404)
+        self.parse_path(path)
+        if self.record_id:
+            result = db.get_record(self.collection, self.record_id)
         else:
-            response_obj = {"data":pkl_jr.get_pickle()["data"].values()}
-            response_obj['data'].sort(key = lambda x: x['id'])
+            result = db.get_collection(self.collection)
+
+        if result is not None:
+            response_obj = {'data': result}
             self.set_status(200)
             self.write(response_obj)
             self.set_header("Content-Type", "application/vnd.api+json")
+        else:
+            self.set_status(404)
 
     def post(self, path):
-        pkl_jr = PickleJar(path)
-        save_obj = pkl_jr.get_pickle()
-        new_id = save_obj["nextval"]
+        self.parse_path(path)
         record = json.loads(self.request.body)
-        record.update({"id":str(save_obj["nextval"]),"type":pkl_jr.get_type()})
-        save_obj["data"][str(new_id)] = record
-        save_obj["nextval"] = save_obj["nextval"] + 1
-
-        try:
-            pkl_jr.save_pickle(save_obj)
-            response_obj = {"data":save_obj["data"][str(new_id)]}
+            response_obj = {'data': db.set(self.collection, record)}
             self.set_status(201)
         except:
-            response_obj = {"message":"Error saving record."}
+            response_obj = {'message': 'Error saving record.'}
             self.set_status(500)
         self.write(response_obj)
 
     def put(self, path):
-        pkl_jr = PickleJar(path)
-        pkl_id = pkl_jr.get_id()
+        self.parse_path(path)
+        result = json.loads(self.request.body)
+        response_obj = {'data': db.set(self.collection, result, self.record_id)}
+        self.write(response_obj)
 
-        save_obj = pkl_jr.get_pickle()
-        save_obj["data"][str(pkl_id)] = json.loads(self.request.body)
-
-        response_obj = {"data":{str(pkl_id):save_obj["data"][str(pkl_id)]}}
-        pkl_jr.save_pickle(save_obj)
+    def patch(self, path):
+        self.parse_path(path)
+        record = json.loads(self.request.body)
+        temp_obj = db.get_record(self.collection, self.record_id)
+        temp_obj.update(record)
+        response_obj = {'data': db.set(self.collection, temp_obj, self.record_id)}
         self.write(response_obj)
 
     def delete(self, path):
-        pkl_jr = PickleJar(path)
-        pkl_id = pkl_jr.get_id()
-
-        if pkl_id:
-            save_obj = pkl_jr.get_pickle()
-            try:
-                del save_obj["data"][str(pkl_id)]
-                pkl_jr.save_pickle(save_obj)
-                self.set_status(204)
-            except:
-                self.set_status(404)
-        else:
-            pkl_jr.save_pickle({"nextval":100, "data":{}})
+        self.parse_path(path)
+        try:
+            if self.record_id:
+                db.delete_record(self.collection, self.record_id)
+            else:
+                db.delete_collection(self.collection)
             self.set_status(204)
-
-    def patch(self, path):
-        pkl_jr = PickleJar(path)
-        pkl_id = pkl_jr.get_id()
-        save_obj = pkl_jr.get_pickle()
-        temp_obj = save_obj["data"][str(pkl_id)]
-        merge_obj = json.loads(self.request.body)
-        temp_obj.update(merge_obj)
-        save_obj["data"][str(pkl_id)] = temp_obj
-        response_obj = {"data":{str(pkl_id):temp_obj}}
-        pkl_jr.save_pickle(save_obj)
-        self.write(response_obj)
+        except:
+            self.set_status(404)
 
     def head(self, path):
-        pkl_jr = PickleJar(path)
-        pkl_id = pkl_jr.get_id()
-        if pkl_id:
-            try:
-                result = pkl_jr.get_pickle()
-                response_obj = {"data":result["data"][str(pkl_id)]}
-                self.set_header("Content-Type", "application/vnd.api+json")
-                self.set_status(200)
-            except:
-                response_obj = {"message":"Record not found."}
-                self.set_status(404)
+        self.parse_path(path)
+        if self.record_id:
+            result = db.get_record(self.collection, self.record_id)
         else:
-            response_obj = {"data":pkl_jr.get_pickle()["data"].values()}
-            self.set_header("Content-Type", "application/vnd.api+json")
+            result = db.get_collection(self.collection)
+
+        if result:
+            response_obj = {'data': result}
             self.set_status(200)
+            self.write(response_obj)
+            self.set_header("Content-Type", "application/vnd.api+json")
+        else:
+            self.set_status(404)
 
     def options(self, path):
         self.set_status(200)
