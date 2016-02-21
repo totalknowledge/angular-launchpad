@@ -19,7 +19,7 @@ from twisted.trial import unittest
 from twisted.internet import defer, reactor
 from cyclone import httpclient
 
-import backend
+from backend import app
 
 
 class BaseTestCase(unittest.TestCase):
@@ -58,11 +58,7 @@ class BaseTestCase(unittest.TestCase):
     def get_app(self):
         """ Create an instance of our cyclone application. """
         if not self._app:
-            self._app = cyclone.web.Application([
-                (r"/api/v0/(.*)", backend.WebServiceHandler),
-                (r"/api/(.*)", backend.WebServiceHandler),
-                (r"/(.*)", backend.MainHandler)
-            ])
+            self._app = app.app
 
         return self._app
 
