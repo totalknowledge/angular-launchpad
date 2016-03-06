@@ -1,18 +1,22 @@
 {
-  "name": "angular-demos",
+  "name": "angular2-launchpad",
   "version": "0.0.1",
   "description": "Rapid Prototyping Backend with Angular Seed",
   "main": "index.html",
   "scripts": {
     "tsc": "tsc",
     "tsc:w": "tsc -w",
+    "gulp": "gulp",
     "backend": "./backend.py || backend.py",
-    "test": "./test.py || trial.py test.py",
-    "start": "concurrent \"npm run tsc:w\" \"npm run backend\" "
+    "test-backend": "./test.py || trial.py test.py",
+    "pretest": "rm -rf coverage && ls -Ral app | grep spec | grep -n map",
+    "test": "karma start karma.conf.js",
+    "posttest": "node_modules/.bin/remap-istanbul -i coverage/app/coverage-final.json -o coverage -t html",
+    "start": "concurrent \"npm run tsc:w\" \"npm run gulp\" \"npm run backend\" "
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/totalknowledge/angular-demos.git"
+    "url": "git+https://github.com/totalknowledge/angular2-launchpad.git"
   },
   "keywords": [
     "Python",
@@ -30,17 +34,27 @@
   },
   "homepage": "https://github.com/totalknowledge/angular-demos#readme",
   "dependencies": {
-    "angular2": "^2.0.0-beta.3",
-    "systemjs": "0.19.6",
-    "es6-promise": "^3.0.2",
+    "angular2": "^2.0.0-beta.8",
+    "systemjs": "^0.19.23",
+    "es6-promise": "^3.1.2",
     "es6-shim": "^0.33.13",
     "reflect-metadata": "0.1.2",
     "rxjs": "^5.0.0-beta.2",
     "zone.js": "^0.5.15"
   },
   "devDependencies": {
-    "concurrently": "^1.0.0",
+    "concurrently": "^2.0.0",
+    "gulp": "^3.9.1",
+    "gulp-jade": "^1.1.0",
+    "gulp-sass": "^2.2.0",
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.21",
+    "karma-chrome-launcher": "^0.2.2",
+    "karma-cli": "^0.1.2",
+    "karma-coverage": "^0.5.4",
+    "karma-jasmine": "^0.3.7",
     "node-sass": "^3.4.2",
-    "typescript": "^1.7.5"
+    "remap-istanbul": "^0.5.1",
+    "typescript": "^1.8.7"
   }
 }
