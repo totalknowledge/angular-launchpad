@@ -33,7 +33,7 @@ class WebServiceHandler(cyclone.web.RequestHandler):
         save_obj = pkl_jr.get_pickle()
         new_id = save_obj["nextval"]
         record = json.loads(self.request.body)
-        record.update({"id":save_obj["nextval"],"type":pkl_jr.get_type()})
+        record.update({"id":str(save_obj["nextval"]),"type":pkl_jr.get_type()})
         save_obj["data"][str(new_id)] = record
         save_obj["nextval"] = save_obj["nextval"] + 1
 

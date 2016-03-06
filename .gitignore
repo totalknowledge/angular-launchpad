@@ -3,4 +3,5 @@ pickle_jar
 node_modules
 npm-debug.log
 *.pyc
-_trial_temp/
+_trial_temp*
+coverage
