@@ -1,0 +1,23 @@
+doctype html
+html
+   head
+      title Jasmine Tests
+      link(rel="stylesheet", href="/node_modules/jasmine-core/lib/jasmine-core/jasmine.css")
+
+      script(src="/node_modules/jasmine-core/lib/jasmine-core/jasmine.js")
+      script(src="/node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js")
+      script(src="/node_modules/jasmine-core/lib/jasmine-core/boot.js")
+      script(src="/node_modules/es6-shim/es6-shim.min.js")
+      script(src="/node_modules/systemjs/dist/system-polyfills.js")
+      script(src="/node_modules/angular2/bundles/angular2-polyfills.js")
+      script(src="/node_modules/systemjs/dist/system.src.js")
+      script(src="/node_modules/rxjs/bundles/Rx.js")
+      script(src="/node_modules/angular2/bundles/angular2.dev.js")
+      script(src="/node_modules/angular2/bundles/testing.dev.js")
+         
+      script System.config({packages: {app: {format: 'packages', defaultExtension: 'js'}}});
+         
+   body
+      script describe('Some Tests', () => {
+         | it('true is true', function(){expect(true).toEqual(true)});});
+      script(src="tests/cb.pipes.spec.js")

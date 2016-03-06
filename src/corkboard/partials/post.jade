@@ -1,0 +1,16 @@
+div(*ngIf="!post.id").row
+   input(type="text", [(ngModel)]="post.attributes.name")
+   textarea([(ngModel)]="post.attributes.post")
+   button((click)="createPost()").btn.btn-sm.pull-right Post
+   a((click)="cancelCreate()").pull-right Cancel
+div(id="{{post.id}}", *ngIf="post.id && !edit").row
+   div(*ngIf="!index") {{post.attributes.name | titleCase}}
+   div {{post.attributes.post}}
+   button.btn.btn-sm.pull-right Quote
+   a((click)="editPost()").pull-right Edit
+   a((click)="deletePost()").pull-right Delete
+div(id="{{post.id}}", *ngIf="edit").row
+   input(type="text", [(ngModel)]="post.attributes.name")
+   textarea([(ngModel)]="post.attributes.post")
+   button((click)="savePost()").btn.btn-sm.pull-right Post
+   a((click)="cancelEdit()").pull-right Cancel

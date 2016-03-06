@@ -1,0 +1,9 @@
+div.container
+   cb-post(*ngFor="#post of posts; #i = index",
+           [post]="post",
+           [index]="i",
+           (deleted)="onDelete(i)")
+   hr
+   hr
+   cb-post([post]="newpost",
+           (created)="onCreate()")
