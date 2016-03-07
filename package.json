@@ -4,6 +4,8 @@
   "description": "Rapid Prototyping Backend with Angular Seed",
   "main": "index.html",
   "scripts": {
+    "clean": "rm -rf app && rm -rf coverage && rm -f *.pyc && rm -f launchpad/*.pyc && rm -f launchpad/*/*.pyc && rm -rf _trial_*",
+    "distclean": "npm run clean && rm -rf node_modules && rm -rf pickle_jar",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "gulp": "gulp",

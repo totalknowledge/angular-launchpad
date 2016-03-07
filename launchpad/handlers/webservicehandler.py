@@ -125,3 +125,7 @@ class WebServiceHandler(cyclone.web.RequestHandler):
     def options(self, path):
         self.set_status(200)
         self.set_header("Allow", "HEAD, GET, PUT, PATCH, POST, DELETE, HEAD, OPTIONS")
+
+    def default(self, path):
+        self.set_status(405)
+        self.write({"error":{"title":"Method Not Allowed"}})

@@ -48,3 +48,6 @@ class MainHandler(cyclone.web.RequestHandler):
             with open(self.get_file_path('index.html'), 'rb') as request_page:
                 self.write(request_page.read())
                 self.set_status(200)
+    def default(self, path):
+        self.set_status(405)
+        self.write({"error":{"title":"Method Not Allowed"}})
