@@ -32,18 +32,38 @@ class WebServiceHandler(cyclone.web.RequestHandler):
         pkl_jr = PickleJar(path)
         save_obj = pkl_jr.get_pickle()
         new_id = save_obj["nextval"]
-        record = json.loads(self.request.body)
-        record.update({"id":str(save_obj["nextval"]),"type":pkl_jr.get_type()})
-        save_obj["data"][str(new_id)] = record
-        save_obj["nextval"] = save_obj["nextval"] + 1
-
-        try:
-            pkl_jr.save_pickle(save_obj)
-            response_obj = {"data":save_obj["data"][str(new_id)]}
-            self.set_status(201)
-        except:
-            response_obj = {"message":"Error saving record."}
-            self.set_status(500)
+        if self.request.body:
+            record = json.loads(self.request.body)
+            if isinstance(record, dict) and record.type:
+                record_type = record.type
+            elif isinstance(record, dict):
+                record_type = pkl_jr.get_type()
+            else:
+                record_type = False
+        else:
+            record = ""
+            record_type = False
+        if record_type == pkl_jr.get_type():
+            if not pkl_jr.get_id():
+                record.update({"id":str(save_obj["nextval"]),"type":pkl_jr.get_type()})
+                save_obj["data"][str(new_id)] = record
+                save_obj["nextval"] = save_obj["nextval"] + 1
+                try:
+                    pkl_jr.save_pickle(save_obj)
+                    response_obj = {"data":save_obj["data"][str(new_id)]}
+                    self.set_status(201)
+                except:
+                    response_obj = {"error":{"title": "Error saving record."}}
+                    self.set_status(500)
+            else:
+                response_obj = {"error":{"title":"Forbidden"}}
+                self.set_status(403)
+        elif not record_type == pkl_jr.get_type():
+            response_obj = {"error":{"title":"Conflict"}}
+            self.set_status(409)
+        else:
+            response_obj = {"error":{"title":"Bad Request"}}
+            self.set_status(400)
         self.write(response_obj)
 
     def put(self, path):
