@@ -8,27 +8,22 @@ import cyclone.web
 class MainHandler(cyclone.web.RequestHandler):
     """ Return files from app and node_modules otherwise return index.html"""
 
+    def initialize(self):
+        self.valid_paths = tuple(settings.CONF_OPTIONS["contentdirs"])
+        self.mimetypes = settings.CONF_OPTIONS["mimetypes"]
+        self.default_extension = settings.CONF_OPTIONS["defaultextension"]
+
     @staticmethod
     def get_file_path(path):
         path_segment = path.split('?',1)[0]
         return os.path.join(settings.doc_dir, path_segment)
 
     def get(self, path):
-        if path.startswith('app') or path.startswith('node_modules'):
-            self.mimetypes = {'html': 'text/html',
-                              'css': 'text/css',
-                              'js': 'application/javascript',
-                              'map': 'application/javascript',
-                              'ico': 'image/x-icon',
-                              'jpg': 'image/jpeg',
-                              'png': 'image/png',
-                              'gif': 'image/gif',
-                              'xml': 'application/xml'}
+        if path.startswith(self.valid_paths):
             filetype = path.split('.')[-1]
             if filetype not in self.mimetypes:
-                path = path + '.js'
-                filetype = 'js'
-            boo = filetype
+                path = path + '.' + self.default_extension
+                filetype = self.default_extension
             try:
                 with open(self.get_file_path(path), 'rb') as request_page:
                     self.write(request_page.read())
