@@ -34,16 +34,14 @@ class WebServiceHandler(cyclone.web.RequestHandler):
         new_id = save_obj["nextval"]
         if self.request.body:
             record = json.loads(self.request.body)
-            if isinstance(record, dict) and record.type:
-                record_type = record.type
-            elif isinstance(record, dict):
-                record_type = pkl_jr.get_type()
+            if isinstance(record, dict) and type in record.keys():
+                record_type = record['type']
             else:
-                record_type = False
+                record_type = pkl_jr.get_type()
         else:
             record = ""
             record_type = False
-        if record_type == pkl_jr.get_type():
+        if isinstance(record, dict) and record_type == pkl_jr.get_type():
             if not pkl_jr.get_id():
                 record.update({"id":str(save_obj["nextval"]),"type":pkl_jr.get_type()})
                 save_obj["data"][str(new_id)] = record
@@ -58,7 +56,7 @@ class WebServiceHandler(cyclone.web.RequestHandler):
             else:
                 response_obj = {"error":{"title":"Forbidden"}}
                 self.set_status(403)
-        elif not record_type == pkl_jr.get_type():
+        elif record_type != pkl_jr.get_type():
             response_obj = {"error":{"title":"Conflict"}}
             self.set_status(409)
         else:
