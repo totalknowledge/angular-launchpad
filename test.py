@@ -164,3 +164,42 @@ class DeleteTest(BaseTestCase):
         """ Delete empty collection test. """
         res = yield self.fetch('/api/v0/empty/', method='DELETE')
         self.assertEquals(204, res.code, msg="Expected code 204, got {}".format(res.code))
+
+
+class PostTest(BaseTestCase):
+
+    @defer.inlineCallbacks
+    def test_post_missing_record_id(self):
+        """ Post empty record to id test. """
+        res = yield self.fetch('/api/v0/mock/101/', method='POST')
+        self.assertEquals(400, res.code, msg="Expected code 400, got {}".format(res.code))
+
+    @defer.inlineCallbacks
+    def test_post_missing_record(self):
+        """ Post empty record test. """
+        res = yield self.fetch('/api/v0/mock/', method='POST')
+        self.assertEquals(400, res.code, msg="ExpectedCode 400, got {}".format(res.code))
+
+    @defer.inlineCallbacks
+    def test_post_record(self):
+        """ Create record test. """
+        res = yield self.fetch('/api/v0/mock/', method='POST', body={"name": "Lisa Smith", "age": 65, "weight": "120 lbs"})
+        self.assertEquals(201, res.code, msg="Expect code 201, got {}".format(res.code))
+
+    @defer.inlineCallbacks
+    def test_post_record_wrong_type(self):
+        """ Create record with wrong type test. """
+        res = yield self.fetch('/api/v0/mock/', method='POST', body={"name": "Lisa Smith", "type": "65", "weight": "120 lbs"})
+        self.assertEquals(409, res.code, msg="Expect code 409, got {}".format(res.code))
+
+    @defer.inlineCallbacks
+    def test_post_record_id(self):
+        """ Attempt to post to id test. """
+        res = yield self.fetch('/api/v0/mock/100', method='POST', body={"name": "Lisa Smith", "age": 65, "weight": "120 lbs"})
+        self.assertEquals(403, res.code, msg="Expect code 403, got {}".format(res.code))
+
+    @defer.inlineCallbacks
+    def test_post_list(self):
+        """ Attempt to post a list. """
+        res = yield self.fetch('/api/v0/mock/100', method='POST', body=[{"name": "Lisa Smith", "age": 65, "weight": "120 lbs"}])
+        self.assertEquals(400, res.code, msg="Expect code 400, got {}".format(res.code))
