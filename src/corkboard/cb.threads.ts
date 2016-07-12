@@ -1,11 +1,11 @@
 
-import {Component, OnInit} from 'angular2/core';
+import {Component, OnInit} from '@angular/core';
 import {CollectionService} from "./cb.services";
 import {Post} from "./cb.posts";
 
 @Component({
    selector: 'cb-thread',
-   bindings: [CollectionService],
+   providers: [CollectionService],
    directives: [Post],
    templateUrl: '/app/corkboard/partials/thread.html'
 })

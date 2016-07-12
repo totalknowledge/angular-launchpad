@@ -1,7 +1,7 @@
-import {it, describe, expect, beforeEach, inject, injectAsync, beforeEachProviders} from 'angular2/testing';
-import {provide} from 'angular2/core';
-import {Http, Response, ResponseOptions, XHRBackend, HTTP_PROVIDERS} from 'angular2/http';
-import {MockBackend, MockConnection} from 'angular2/http/testing'
+import {it, describe, expect, beforeEach, inject, beforeEachProviders} from '@angular/core/testing';
+import {provide} from '@angular/core';
+import {Http, Response, ResponseOptions, XHRBackend, HTTP_PROVIDERS} from '@angular/http';
+import {MockBackend, MockConnection} from '@angular/http/testing'
 import {Post} from "../cb.posts";
 import {CollectionService} from "../cb.services";
 

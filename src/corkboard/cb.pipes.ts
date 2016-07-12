@@ -1,4 +1,4 @@
-import {PipeTransform, Pipe, Injectable} from 'angular2/core';
+import {PipeTransform, Pipe, Injectable} from '@angular/core';
 
 @Injectable()
 @Pipe({name: 'titleCase'})

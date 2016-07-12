@@ -1,5 +1,5 @@
 div.container
-   cb-post(*ngFor="#post of posts; #i = index",
+   cb-post(*ngFor="let post of posts; let i = index",
            [post]="post",
            [index]="i",
            (deleted)="onDelete(i)")

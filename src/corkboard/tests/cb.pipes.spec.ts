@@ -1,4 +1,4 @@
-import {it, describe, expect, beforeEach, inject} from 'angular2/testing';
+import {it, describe, expect, beforeEach, inject} from '@angular/core/testing';
 import {TitleCase} from "../cb.pipes";
 
 describe('TitleCase Tests', () => {
