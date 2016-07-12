@@ -1,6 +1,7 @@
 app
 pickle_jar
 node_modules
+typings
 npm-debug.log
 *.pyc
 _trial_temp*
