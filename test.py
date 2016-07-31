@@ -13,13 +13,14 @@ Methods tested:
 import os
 import cPickle
 import json
+import shutil
 
 import cyclone.web
 from twisted.trial import unittest
 from twisted.internet import defer, reactor
 from cyclone import httpclient
 
-from launchpad import app
+from launchpad import app, settings
 
 
 class BaseTestCase(unittest.TestCase):
@@ -40,8 +41,8 @@ class BaseTestCase(unittest.TestCase):
         self._app = self.get_app()
         self._listener = None
 
-        # Ensure the picklejar exists and fill it with our known values
-        self.setup_pickle_jar()
+        # Ensure that our database is configured and fill it with our known values
+        self.setup_data()
 
         # Create our app to use for our tests
         if self._app:
@@ -51,23 +52,31 @@ class BaseTestCase(unittest.TestCase):
 
     def tearDown(self):
         """ Teardown activities for test cases. """
-
         if self._listener:
             self._listener.stopListening()
+
+        self.teardown_data();
 
     def get_app(self):
         """ Create an instance of our cyclone application. """
         if not self._app:
             self._app = app.app
+            # TODO: Clean this up, figure out how to set test specefic configs
+            # If we are using the doc_dir for our picklejar, set it to a test location
+            if settings.doc_dir:
+                app.db._pickle_jar_dir = settings.doc_dir + '/_trial_temp/pickle_jar'
 
         return self._app
 
-    def setup_pickle_jar(self):
-        """ Set up our pickle jar. """
-
-        app.db._pickle_jar_dir = 'pickle_jar'
+    def setup_data(self):
         for collection, data in self.get_known_values().iteritems():
-            app.db.write_pickle(collection, data)
+            for id, record in data['data'].iteritems():
+                app.db.set_record(collection, record, id)
+
+    def teardown_data(self):
+
+        if settings.doc_dir:
+            shutil.rmtree(app.db._pickle_jar_dir)
 
     def get_known_values(self):
         """ Return our mock values for all tests. """
@@ -75,7 +84,6 @@ class BaseTestCase(unittest.TestCase):
         if not self._known_values:
             self._known_values = {
                 'mock': {
-                    'nextval': '103',
                     'schema': {},
                     'data': {
                         '100': {'id': '100', 'name': 'Bob Smith', 'age': 23, 'weight': '183 lbs'},

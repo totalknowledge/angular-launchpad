@@ -43,13 +43,16 @@ class PickleJar(BaseAdapter):
         collection_contents = self.read_pickle(collection)
         return collection_contents['data'].get(str(id), None)
 
-    def set(self, collection, record, id = None):
+    def set_record(self, collection, record, id = None):
         
         collection_contents = self.read_pickle(collection)
 
         if not id:
             id = collection_contents['nextval']
             collection_contents['nextval'] += 1
+        elif id >= collection_contents['nextval']:
+            # TODO: Check to make sure this nextval doesn't already exist in the pickle.
+            collection_contents['nextval'] = str(int(id) + 1)
 
         record['id'] = str(id)
         record['type'] = collection

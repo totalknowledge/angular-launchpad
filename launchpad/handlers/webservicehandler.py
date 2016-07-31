@@ -35,7 +35,8 @@ class WebServiceHandler(cyclone.web.RequestHandler):
     def post(self, path):
         self.parse_path(path)
         record = json.loads(self.request.body)
-            response_obj = {'data': db.set(self.collection, record)}
+        try:
+            response_obj = {'data': db.set_record(self.collection, record)}
             self.set_status(201)
         except:
             response_obj = {'message': 'Error saving record.'}
@@ -45,7 +46,7 @@ class WebServiceHandler(cyclone.web.RequestHandler):
     def put(self, path):
         self.parse_path(path)
         result = json.loads(self.request.body)
-        response_obj = {'data': db.set(self.collection, result, self.record_id)}
+        response_obj = {'data': db.set_record(self.collection, result, self.record_id)}
         self.write(response_obj)
 
     def patch(self, path):
@@ -53,7 +54,7 @@ class WebServiceHandler(cyclone.web.RequestHandler):
         record = json.loads(self.request.body)
         temp_obj = db.get_record(self.collection, self.record_id)
         temp_obj.update(record)
-        response_obj = {'data': db.set(self.collection, temp_obj, self.record_id)}
+        response_obj = {'data': db.set_record(self.collection, temp_obj, self.record_id)}
         self.write(response_obj)
 
     def delete(self, path):

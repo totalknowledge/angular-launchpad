@@ -12,7 +12,7 @@ class BaseAdapter(object):
         return {}
 
     @abstractmethod
-    def set(self, collection, id):
+    def set_record(self, collection, record, id):
         return []
 
     @abstractmethod
