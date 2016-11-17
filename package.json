@@ -1,15 +1,13 @@
 {
   "name": "angular2-launchpad",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Rapid Prototyping Backend with Angular Seed",
   "main": "index.html",
   "scripts": {
     "clean": "rm -rf app && rm -rf coverage && rm -f *.pyc && rm -f launchpad/*.pyc && rm -f launchpad/*/*.pyc && rm -rf _trial_*",
     "distclean": "npm run clean && rm -rf node_modules && rm -rf pickle_jar",
-    "postinstall": "typings install",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
-    "typings": "typings",
     "gulp": "gulp",
     "backend": "./backend.py || backend.py",
     "test-backend": "./test.py || trial.py test.py",
@@ -34,41 +32,41 @@
   "author": "Bryan Patrick Coleman",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/totalknowledge/angular-demos/issues"
+    "url": "https://github.com/totalknowledge/angular2-launchpad/issues"
   },
-  "homepage": "https://github.com/totalknowledge/angular-demos#readme",
+  "homepage": "https://github.com/totalknowledge/angular2-launchpad#readme",
   "dependencies": {
-    "@angular/common": "2.0.0-rc.4",
-    "@angular/compiler": "2.0.0-rc.4",
-    "@angular/core": "2.0.0-rc.4",
-    "@angular/forms": "0.2.0",
-    "@angular/http": "2.0.0-rc.4",
-    "@angular/platform-browser": "2.0.0-rc.4",
-    "@angular/platform-browser-dynamic": "2.0.0-rc.4",
-    "@angular/router": "3.0.0-beta.1",
-    "@angular/router-deprecated": "2.0.0-rc.2",
-    "@angular/upgrade": "2.0.0-rc.4",
+    "@angular/common": "~2.2.0",
+    "@angular/compiler": "~2.2.0",
+    "@angular/core": "~2.2.0",
+    "@angular/forms": "~2.2.0",
+    "@angular/http": "~2.2.0",
+    "@angular/platform-browser": "~2.2.0",
+    "@angular/platform-browser-dynamic": "~2.2.0",
+    "@angular/router": "~3.2.0",
+    "@angular/upgrade": "~2.2.0",
 
-    "systemjs": "^0.19.27",
-    "core-js": "^2.4.0",
-    "reflect-metadata": "0.1.3",
-    "rxjs": "^5.0.0-beta.6",
-    "zone.js": "^0.6.12"
+    "angular-in-memory-web-api": "~0.1.15",
+    "core-js": "^2.4.1",
+    "reflect-metadata": "^0.1.8",
+    "rxjs": "5.0.0-beta.12",
+    "systemjs": "0.19.39",
+    "zone.js": "^0.6.25"
   },
   "devDependencies": {
-    "concurrently": "^2.0.0",
+    "@types/core-js": "^0.9.34",
+    "@types/node": "^6.0.45",
+    "concurrently": "^3.0.0",
     "gulp": "^3.9.1",
-    "gulp-jade": "^1.1.0",
-    "gulp-sass": "^2.2.0",
+    "gulp-pug": "^3.1.0",
+    "gulp-sass": "^2.3.2",
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.21",
     "karma-chrome-launcher": "^0.2.2",
     "karma-cli": "^0.1.2",
     "karma-coverage": "^0.5.4",
     "karma-jasmine": "^0.3.7",
-    "node-sass": "^3.8.0",
     "remap-istanbul": "^0.5.1",
-    "typescript": "^1.8.7",
-    "typings": "^1.0.4"
+    "typescript": "^2.0.3"
   }
 }

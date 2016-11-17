@@ -1,6 +1,6 @@
 var gulp = require('gulp'),
     sass = require('gulp-sass'),
-    jade = require('gulp-jade');
+    pug = require('gulp-pug');
 
 gulp.task('sass', function(){
    return gulp.src('./src/**/*.scss')
@@ -10,15 +10,15 @@ gulp.task('sass', function(){
       .pipe(gulp.dest('./app'));
 });
 
-gulp.task('jade', function() {
+gulp.task('pug', function() {
     return gulp.src('./src/**/*.jade')
-        .pipe(jade())
+        .pipe(pug())
         .pipe(gulp.dest('./app'));
 });
 
 gulp.task('watch', function(){
    gulp.watch('./src/**/*.scss', ['sass']);
-   gulp.watch('./src/**/*.jade', ['jade']);
+   gulp.watch('./src/**/*.jade', ['pug']);
 });
 
-gulp.task('default', ['sass', 'jade', 'watch']);
+gulp.task('default', ['sass', 'pug', 'watch']);
