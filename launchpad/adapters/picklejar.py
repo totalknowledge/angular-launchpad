@@ -1,4 +1,4 @@
-import cPickle
+import pickle
 
 class PickleJar(object):
     """ Store persistant data in pickle files. """

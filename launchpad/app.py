@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import os
 import sys
 
@@ -9,7 +10,8 @@ if not os.path.exists(os.path.join(settings.doc_dir, "pickle_jar")):
         os.makedirs(os.path.join(settings.doc_dir, "pickle_jar"))
 
 # Late import
-from handlers import MainHandler, WebServiceHandler
+from launchpad.handlers import MainHandler
+from launchpad.handlers import WebServiceHandler
 
 app = tornado.web.Application([
         (r"/api/v0/(.*)", WebServiceHandler),
