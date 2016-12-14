@@ -4,17 +4,16 @@ Trying to figure out how to change the name.  This project is meant to be a rapi
 
 ## Dependancies
 * Python (tested with 2.7.11 only)
-* pip
 * Visual C++ for Python 2.7
 * Node.js (tested with 4.2.6)
 * npm
+* pip (optional)
 
 ## Getting code and Starting
 Clone the repository with "git clone https://github.com/totalknowledge/angular-demos.git"
 
 ### Additional setup steps
-* pip install twisted
-* pip install cyclone
+* pip install -r requirements.txt
 * npm install
 
 ## Starting Typescript Compiler and Backend Process

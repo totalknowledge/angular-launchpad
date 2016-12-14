@@ -2,10 +2,10 @@ import os
 
 from launchpad import settings
 
-import cyclone.web
+import tornado.web
 
 
-class MainHandler(cyclone.web.RequestHandler):
+class MainHandler(tornado.web.RequestHandler):
     """ Return files from app and node_modules otherwise return index.html"""
 
     def initialize(self):
