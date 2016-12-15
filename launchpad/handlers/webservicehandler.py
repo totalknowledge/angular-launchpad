@@ -2,10 +2,10 @@ import json
 
 from launchpad.adapters.picklejar import PickleJar
 
-import cyclone.web
+import tornado.web
 
 
-class WebServiceHandler(cyclone.web.RequestHandler):
+class WebServiceHandler(tornado.web.RequestHandler):
     """ Return arbitrary api calls in json format. """
     def get(self, path):
         # Grab the REQUEST_METHOD collection and id if exists from the Request

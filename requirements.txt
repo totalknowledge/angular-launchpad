@@ -1,2 +1,1 @@
-cyclone == 1.1
-service_identity == 16.0.0
+tornado == 4.4.2

@@ -1,4 +1,4 @@
-import cPickle
+import pickle
 
 class PickleJar(object):
     """ Store persistant data in pickle files. """
@@ -21,7 +21,7 @@ class PickleJar(object):
         """ Retrive collection from disk. """
         try:
             self.file_buffer = open(self.file_path, 'rb')
-            self.collection_contents = cPickle.load(self.file_buffer)
+            self.collection_contents = pickle.load(self.file_buffer)
             self.file_buffer.close()
         except EOFError:
             self.collection_contents = {"nextval":100, "data":{}}
@@ -29,5 +29,5 @@ class PickleJar(object):
     def save_pickle(self, obj):
         """ Save collection to disk. """
         self.file_buffer = open(self.file_path, 'wb')
-        self.file_buffer.write(cPickle.dumps(obj, 2))
+        self.file_buffer.write(pickle.dumps(obj, 2))
         self.file_buffer.close()

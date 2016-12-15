@@ -18,25 +18,25 @@ def parse_args(argv):
                                   "pw=",
                                   "password="])
    except getopt.GetoptError:
-      print 'test.py -p <portnumber> -c <configfile> -d <database:port> -p <password>'
+      print('test.py -p <portnumber> -c <configfile> -d <database:port> -p <password>')
       sys.exit(2)
    for opt, arg in opts:
      if opt in ('-h', "--help"):
-         print 'Usage: backend.py [options]'
-         print
-         print 'Options:'
-         print '-h, --help \t\tprint this message'
-         print '-v, --version \t\tprint Launchpad version'
-         print '-p, --port \t\tprovide portnumber for Launchpad to use'
-         print '-c, --conf \t\tuse configuration file provided'
-         print '-l, --log \t\tlog to file instead of standard out'
-         print '--db, --database \teither pickle or mongodb:portnumber'
-         print '--pw, --password \tpassword used with mongodb'
-         print
-         print 'Documentation can be found at https://github.com/totalknowledge/angular2-launchpad'
+         print('Usage: backend.py [options]')
+         print()
+         print('Options:')
+         print('-h, --help \t\tprint this message')
+         print('-v, --version \t\tprint Launchpad version')
+         print('-p, --port \t\tprovide portnumber for Launchpad to use')
+         print('-c, --conf \t\tuse configuration file provided')
+         print('-l, --log \t\tlog to file instead of standard out')
+         print('--db, --database \teither pickle or mongodb:portnumber')
+         print('--pw, --password \tpassword used with mongodb')
+         print()
+         print('Documentation can be found at https://github.com/totalknowledge/angular2-launchpad')
          sys.exit()
      elif opt in ("-v", "--version"):
-         print 'v0.1'
+         print('v0.1')
          sys.exit()
      elif opt in ("-c", "--conf"):
          with open(arg, 'r') as fb:
