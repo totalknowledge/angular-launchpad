@@ -1,18 +1,22 @@
-import { NgModule }      from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule }   from '@angular/forms';
+import { NgModule }       from '@angular/core';
+import { BrowserModule }  from '@angular/platform-browser';
+import { FormsModule }    from '@angular/forms';
+import { MaterialModule } from '@angular/material';
 
-import { AppComponent }  from './app.component';
-import { Package } from '../structure/pkg.mod';
+import { AppComponent }   from './app.component';
+import { PackageControler }        from '../invoice/pkg.mod';
+
+import 'hammerjs/hammer';
 
 @NgModule({
   imports: [
     BrowserModule,
-    FormsModule
+    FormsModule,
+    MaterialModule.forRoot()
   ],
   declarations: [
     AppComponent,
-    Package
+    PackageControler
   ],
   bootstrap: [ AppComponent ]
 })
