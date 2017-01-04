@@ -3,7 +3,7 @@
 Trying to figure out how to change the name.  This project is meant to be a rapid platform that Angular2 apps and Demo's requiring web services can be rapidly prototyped.  The platform should actually scale pretty well __look for benchmarks in the future__ and will be even more production ready with the addition of MongoDB after initial prototype.
 
 ## Dependancies
-* Python (tested with 2.7.11 only)
+* Python (tested with 2.7.11+ and 3.5.2)
 * Visual C++ for Python 2.7
 * Node.js (tested with 4.2.6)
 * npm
