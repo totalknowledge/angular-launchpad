@@ -9,7 +9,6 @@ class MainHandler(tornado.web.RequestHandler):
     """ Return files from app and node_modules otherwise return index.html"""
 
     def initialize(self):
-        self.valid_paths = tuple(settings.CONF_OPTIONS["contentdirs"])
         self.mimetypes = settings.CONF_OPTIONS["mimetypes"]
         self.default_extension = settings.CONF_OPTIONS["defaultextension"]
         self.dir_base = "www/"
