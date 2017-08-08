@@ -16,6 +16,8 @@ Clone the repository with "git clone https://github.com/totalknowledge/angular-d
 * pip install -r requirements.txt
 * npm install
 
+If you wish to use SSL then generate the key and certificate files in the keys directory add them to the launchpad.conf file as "certfile" and "keyfile".  Then define "ssl_port" in launchpad.conf as well.
+
 ## Starting Typescript Compiler and Backend Process
 npm start
 
