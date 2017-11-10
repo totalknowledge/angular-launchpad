@@ -17,13 +17,16 @@ if __name__ == "__main__":
         tornado.log.enable_pretty_logging()
 
     if 'ssl_port' in CONF_OPTIONS.keys():
-        http_server = tornado.httpserver.HTTPServer(
-            app, ssl_options = {
-                "certfile": os.path.join(CONF_OPTIONS["certfile"]),
-                "keyfile": os.path.join(CONF_OPTIONS["keyfile"])
-            }
-        )
-        http_server.listen(CONF_OPTIONS["ssl_port"])
+        try:
+            http_server = tornado.httpserver.HTTPServer(
+                app, ssl_options = {
+                    "certfile": os.path.join(CONF_OPTIONS["certfile"]),
+                    "keyfile": os.path.join(CONF_OPTIONS["keyfile"])
+                }
+            )
+            http_server.listen(CONF_OPTIONS["ssl_port"])
+        except:
+            app.listen(CONF_OPTIONS["port"])
     else:
         app.listen(CONF_OPTIONS["port"])
     tornado.ioloop.IOLoop.current().start()
