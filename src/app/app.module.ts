@@ -7,6 +7,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 
+import { HttpModule }   from '@angular/http';
+import { FormsModule }   from '@angular/forms';
+
 import { AppComponent } from './app.component';
 import { MainPageComponent } from './main-page/main-page.component';
 import { MainAdminPageComponent } from './main-admin-page/main-admin-page.component';
@@ -35,12 +38,13 @@ const appRoutes: Routes = [
     MatToolbarModule,
     MatButtonModule,
     MatMenuModule,
+    HttpModule,
+    FormsModule,
     RouterModule.forRoot(
       appRoutes,
       { enableTracing: false } // <-- debugging purposes only
     )
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

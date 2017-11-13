@@ -1,16 +1,18 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
+import { CollectionService } from "./service.service";
+import { ThreadComponent } from "./thread/thread.component";
 
 @Component({
-  selector: 'app-corkboard',
-  templateUrl: './corkboard.component.html',
-  styleUrls: ['./corkboard.component.css'],
-  encapsulation: ViewEncapsulation.None
+   selector: 'app-corkboard',
+   providers: [CollectionService],
+   templateUrl: './corkboard.component.html',
+   styleUrls: ['./corkboard.component.css'],
+   encapsulation: ViewEncapsulation.None
 })
-export class CorkboardComponent implements OnInit {
+export class CorkboardComponent{
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+   constructor() {
+   }
+   ngOnInit() {
+   }
 }

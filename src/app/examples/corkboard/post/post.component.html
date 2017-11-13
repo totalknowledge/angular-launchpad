@@ -1,3 +1,19 @@
-<p>
-  post works!
-</p>
+<div *ngIf="!post.id">
+  <input type="text" [(ngModel)]="post.attributes.name">
+  <textarea [(ngModel)]="post.attributes.post"></textarea>
+  <button (click)="createPost()">Post</button>
+  <a (click)="cancelCreate()">Cancel</a>
+</div>
+<div id={{post.id}} *ngIf="post.id && !edit">
+  <div *ngIf="!index">{{post.attributes.name}}</div>
+  <div>{{post.attributes.post}}</div>
+  <button>Quote</button>
+  <a (click)="editPost()">Edit</a>
+  <a (click)="deletePost()">Delete</a>
+</div>
+<div id="{{post.id}}" *ngIf="edit">
+  <input type="text" [(ngModel)]="post.attributes.name">
+  <textarea [(ngModel)]="post.attributes.post"></textarea>
+  <button (click)="savePost()">Post</button>
+  <a (click)="cancelEdit()">Cancel</a>
+</div>
