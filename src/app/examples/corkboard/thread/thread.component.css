@@ -1,0 +1,15 @@
+.thread-viewer {
+  margin-top: 1%;
+  margin-left: 20%;
+  margin-right: 20%;
+}
+.thread-viewer mat-card {
+  margin: 1px;
+}
+.thread-viewer mat-card-title, mat-card-content {
+  padding: 8px;
+  background-color: #efeff5;
+}
+.thread-viewer mat-form-field {
+  width: 100%;
+}

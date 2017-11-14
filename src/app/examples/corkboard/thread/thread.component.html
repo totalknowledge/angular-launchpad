@@ -1,10 +1,9 @@
-<div>
+<div class="thread-viewer">
   <app-post *ngFor="let post of posts; let i=index"
             [post]="post"
             [index]="i"
             (deleted)="onDelete(i)"></app-post>
-  <hr>
-  <hr>
+  <br>
   <app-post [post]="newpost"
             (created)="onCreate()"></app-post>
 </div>
