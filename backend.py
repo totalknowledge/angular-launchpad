@@ -29,4 +29,7 @@ if __name__ == "__main__":
             app.listen(CONF_OPTIONS["port"])
     else:
         app.listen(CONF_OPTIONS["port"])
-    tornado.ioloop.IOLoop.current().start()
+    try:
+        tornado.ioloop.IOLoop.current().start()
+    except:
+        tornado.ioloop.IOLoop.instance().stop()
