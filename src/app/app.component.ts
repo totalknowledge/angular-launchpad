@@ -8,7 +8,7 @@ import 'rxjs/add/operator/map';
   selector: 'app-root',
   providers: [AuthService],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   service: AuthService;

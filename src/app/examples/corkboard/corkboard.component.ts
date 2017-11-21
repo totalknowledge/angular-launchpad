@@ -6,7 +6,7 @@ import { ThreadComponent } from "./thread/thread.component";
    selector: 'app-corkboard',
    providers: [CollectionService],
    templateUrl: './corkboard.component.html',
-   styleUrls: ['./corkboard.component.css'],
+   styleUrls: ['./corkboard.component.scss'],
    encapsulation: ViewEncapsulation.None
 })
 export class CorkboardComponent{

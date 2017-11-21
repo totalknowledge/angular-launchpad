@@ -7,7 +7,7 @@ import { Md5 } from 'ts-md5/dist/md5';
   selector: 'app-main-admin-page',
   providers: [CollectionService],
   templateUrl: './main-admin-page.component.html',
-  styleUrls: ['./main-admin-page.component.css'],
+  styleUrls: ['./main-admin-page.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
 export class MainAdminPageComponent implements OnInit {

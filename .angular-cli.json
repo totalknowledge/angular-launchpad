@@ -14,14 +14,14 @@
       ],
       "index": "index.html",
       "main": "main.ts",
-      "serviceWorker": true,
       "polyfills": "polyfills.ts",
       "test": "test.ts",
       "tsconfig": "tsconfig.app.json",
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
+      "serviceWorker": true,
       "styles": [
-        "styles.css"
+        "styles.scss"
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",
@@ -56,7 +56,8 @@
     }
   },
   "defaults": {
-    "styleExt": "css",
-    "component": {}
+    "styleExt": "scss",
+    "component": {
+    }
   }
 }

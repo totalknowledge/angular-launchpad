@@ -6,7 +6,7 @@ import { PostComponent } from "../post/post.component";
    selector: 'app-thread',
    providers: [CollectionService],
    templateUrl: './thread.component.html',
-   styleUrls: ['./thread.component.css'],
+   styleUrls: ['./thread.component.scss'],
    encapsulation: ViewEncapsulation.None
 })
 export class ThreadComponent implements OnInit {

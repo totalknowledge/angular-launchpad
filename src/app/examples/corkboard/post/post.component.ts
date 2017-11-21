@@ -5,7 +5,7 @@ import { CollectionService } from "../service.service";
    selector: 'app-post',
    providers: [CollectionService],
    templateUrl: './post.component.html',
-   styleUrls: ['./post.component.css'],
+   styleUrls: ['./post.component.scss'],
    encapsulation: ViewEncapsulation.None
 })
 export class PostComponent {
