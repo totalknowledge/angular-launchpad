@@ -1,0 +1,16 @@
+.admin-header {
+  margin-top: 5px;
+}
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.mat-table {
+  overflow: auto;
+  max-height: 500px;
+}
+.user-details {
+  margin-bottom: 8px;
+  font-size: 1.1em;
+}

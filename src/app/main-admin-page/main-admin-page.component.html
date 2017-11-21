@@ -1,3 +1,65 @@
-<p style="margin-left: 8px">
-  main-admin-page works!
-</p>
+<mat-tab-group class="admin-tab-group" style="margin-left: 5%; margin-right: 5%;">
+  <mat-tab label="User Admin">
+    <div class="admin-tab-content">
+      <div class="admin-header">
+        <mat-form-field>
+          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+        </mat-form-field>
+      </div>
+      <div class="admin-container mat-elevation-z8">
+        <mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef={{col}} *ngFor="let col of displayedColumns">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{fieldLabel[col]}} </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row[col]}} </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="populateUser(row)">
+          </mat-row>
+        </mat-table>
+        <mat-paginator [pageSizeOptions]="[8, 16, 50, 100]"></mat-paginator>
+      </div>
+      <mat-card id={{user.id}} *ngIf="user.id && !edit">
+        <mat-card-title> User Details </mat-card-title>
+        <mat-card-content>
+          <div *ngFor="let field of displayedColumns" class="user-details">
+            {{fieldLabel[field]}}: {{user[field]}}
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="accent" (click)="editUser()"> Edit </button>
+          <button mat-raised-button color="accent" (click)="resetPassWord()"> Reset Password </button>
+          <button mat-button (click)="clearUser()"> Add New </button>
+        </mat-card-actions>
+      </mat-card>
+      <mat-card *ngIf="!user.id || edit">
+        <mat-card-title> <span *ngIf="!edit">New </span>User Details </mat-card-title>
+        <mat-card-content>
+          <mat-form-field *ngFor="let field of editableColumns">
+            <input type="{{fieldType[field]}}"
+                   [(ngModel)]="user[field]"
+                   matInput
+                   placeholder="{{field}}">
+          </mat-form-field>
+        </mat-card-content>
+        <mat-card-actions *ngIf="!user.id">
+          <button mat-raised-button color="primary" (click)="createUser()">Create</button>
+          <button mat-button (click)="clearUser()">Clear</button>
+        </mat-card-actions>
+        <mat-card-actions *ngIf="edit">
+          <button mat-raised-button color="primary" (click)="patchUser()">Save</button>
+          <button mat-button (click)="cancelEdit()">Cancel</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Tab 2" disabled>
+    No content
+  </mat-tab>
+
+  <mat-tab label="Tab 3" disabled>
+   <div class="admin-tab-content">
+      No content
+    </div>
+  </mat-tab>
+</mat-tab-group>

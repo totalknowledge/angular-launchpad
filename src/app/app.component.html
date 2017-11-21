@@ -19,6 +19,14 @@
     </a>
   </mat-menu>
   <a mat-button routerLink="/admin"> Admin </a>
+  <div class="filler"></div>
+  {{user.firstName}} {{user.lastName}}
+  <button mat-button (click)="signIn()" *ngIf="!loggedin">
+    Sign In
+  </button>
+  <button mat-button (click)="signOut()" *ngIf="loggedin">
+    Sign Out
+  </button>
 </mat-toolbar>
 
 <router-outlet></router-outlet>
