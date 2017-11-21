@@ -1,0 +1,24 @@
+<div mat-dialog-content>
+  <mat-form-field>
+    <input type="text"
+           [(ngModel)]="data.name"
+           matInput
+           tabindex="1"
+           placeholder="User Name">
+  </mat-form-field>
+  <mat-form-field>
+    <input type="password"
+           [(ngModel)]="data.password"
+           matInput
+           tabindex="2"
+           placeholder="Password">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="data" tabindex="3">
+    <span>Sign In</span>
+  </button>
+  <button mat-button tabindex="-1" (click)="onNoClick()">
+    <span>Cancel</span>
+  </button>
+</div>

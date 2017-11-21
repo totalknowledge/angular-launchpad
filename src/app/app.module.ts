@@ -15,7 +15,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 
-import { HttpModule }   from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule }   from '@angular/forms';
 
@@ -58,7 +57,6 @@ const appRoutes: Routes = [
     MatFormFieldModule,
     MatInputModule,
     MatDialogModule,
-    HttpModule,
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot(
