@@ -21,7 +21,10 @@ export class AppComponent {
   constructor(service:AuthService, dialog: MatDialog){
     this.service = service;
     this.dialog = dialog;
-    this.user = {};
+    this.user = JSON.parse(sessionStorage.getItem("user")) || {};
+    if(this.user.id){
+      this.loggedin = true;
+    }
   }
   signIn(){
     let dialogRef = this.dialog.open(SignInDialog, {
