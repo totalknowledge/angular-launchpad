@@ -10,8 +10,9 @@ Methods tested:
 * DELETE
 """
 
+from __future__ import absolute_import
 import os
-import cPickle
+import six.moves.cPickle
 import json
 
 import cyclone.web
@@ -20,6 +21,7 @@ from twisted.internet import defer, reactor
 from cyclone import httpclient
 
 from launchpad import app
+import six
 
 
 class BaseTestCase(unittest.TestCase):
@@ -68,13 +70,13 @@ class BaseTestCase(unittest.TestCase):
         if not os.path.exists("pickle_jar"):
             os.makedirs("pickle_jar")
 
-        for collection, data in self.get_known_values().iteritems():
+        for collection, data in six.iteritems(self.get_known_values()):
             self.save_pickle(collection, data)
 
     def save_pickle(self, collection, data):
         """ Helper method to pickle our mock data to a file. """
         file_buffer = open('pickle_jar/{}.pickle'.format(collection), 'wb')
-        file_buffer.write(cPickle.dumps(data, 2))
+        file_buffer.write(six.moves.cPickle.dumps(data, 2))
         file_buffer.close()
 
     def get_known_values(self):

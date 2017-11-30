@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import os, sys, json, getopt
 
 doc_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))

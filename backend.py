@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
 import sys, os
 import tornado.ioloop
 import tornado.log
@@ -10,13 +11,13 @@ from launchpad.settings import CONF_OPTIONS, parse_args
 if __name__ == "__main__":
 
     parse_args(sys.argv[1:])
-    if 'logfile' in CONF_OPTIONS.keys():
+    if 'logfile' in list(CONF_OPTIONS.keys()):
         with open(CONF_OPTIONS['logfile'], 'a+') as fb:
             tornado.options.options['log_file_prefix'].set(CONF_OPTIONS['logfile'])
     else:
         tornado.log.enable_pretty_logging()
 
-    if 'ssl_port' in CONF_OPTIONS.keys():
+    if 'ssl_port' in list(CONF_OPTIONS.keys()):
         try:
             http_server = tornado.httpserver.HTTPServer(
                 app, ssl_options = {

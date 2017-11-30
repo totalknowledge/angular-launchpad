@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import json
 
 from launchpad.adapters.picklejar import PickleJar
@@ -22,7 +23,7 @@ class WebServiceHandler(tornado.web.RequestHandler):
                 response_obj = {"message":"Record not found."}
                 self.set_status(404)
         else:
-            response_obj = {"data":pkl_jr.get_pickle()["data"].values()}
+            response_obj = {"data":list(pkl_jr.get_pickle()["data"].values())}
             response_obj['data'].sort(key = lambda x: x['id'])
             self.set_status(200)
             self.write(response_obj)
@@ -33,8 +34,8 @@ class WebServiceHandler(tornado.web.RequestHandler):
         save_obj = pkl_jr.get_pickle()
         new_id = save_obj["nextval"]
         if self.request.body:
-            record = json.loads(self.request.body)
-            if isinstance(record, dict) and type in record.keys():
+            record = json.loads(self.request.body.decode('utf-8'))
+            if isinstance(record, dict) and type in list(record.keys()):
                 record_type = record['type']
             else:
                 record_type = pkl_jr.get_type()
@@ -69,7 +70,7 @@ class WebServiceHandler(tornado.web.RequestHandler):
         pkl_id = pkl_jr.get_id()
 
         save_obj = pkl_jr.get_pickle()
-        save_obj["data"][str(pkl_id)] = json.loads(self.request.body)
+        save_obj["data"][str(pkl_id)] = json.loads(self.request.body.decode('utf-8'))
 
         response_obj = {"data":{str(pkl_id):save_obj["data"][str(pkl_id)]}}
         pkl_jr.save_pickle(save_obj)
@@ -96,7 +97,7 @@ class WebServiceHandler(tornado.web.RequestHandler):
         pkl_id = pkl_jr.get_id()
         save_obj = pkl_jr.get_pickle()
         temp_obj = save_obj["data"][str(pkl_id)]
-        merge_obj = json.loads(self.request.body)
+        merge_obj = json.loads(self.request.body.decode('utf-8'))
         temp_obj.update(merge_obj)
         save_obj["data"][str(pkl_id)] = temp_obj
         response_obj = {"data":{str(pkl_id):temp_obj}}
@@ -116,7 +117,7 @@ class WebServiceHandler(tornado.web.RequestHandler):
                 response_obj = {"message":"Record not found."}
                 self.set_status(404)
         else:
-            response_obj = {"data":pkl_jr.get_pickle()["data"].values()}
+            response_obj = {"data":list(pkl_jr.get_pickle()["data"].values())}
             self.set_header("Content-Type", "application/vnd.api+json")
             self.set_status(200)
 

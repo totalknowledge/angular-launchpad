@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import os
 
 from launchpad import settings
@@ -28,7 +29,7 @@ class MainHandler(tornado.web.RequestHandler):
             with open(self.get_file_path(self.dir_base + path), 'rb') as request_page:
                 self.write(request_page.read())
                 self.set_status(200)
-                if filetype in self.mimetypes.keys():
+                if filetype in list(self.mimetypes.keys()):
                     self.set_header("Content-Type", self.mimetypes[filetype])
         except:
             with open(self.get_file_path(self.dir_base + 'index.html'), 'rb') as request_page:
