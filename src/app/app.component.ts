@@ -21,7 +21,7 @@ export class AppComponent {
   constructor(service:AuthService, dialog: MatDialog){
     this.service = service;
     this.dialog = dialog;
-    this.user = JSON.parse(sessionStorage.getItem("user")) || {};
+    this.user = this.service.getUser();
     if(this.user.id){
       this.loggedin = true;
     }
@@ -42,8 +42,8 @@ export class AppComponent {
     });
   }
   signOut(){
-    this.service.signOut();
-    this.user = "";
+    this.service.signOut().subscribe(result => {});
+    this.user = {"attributes":{}};
     this.loggedin = false;
   }
 }

@@ -20,7 +20,7 @@
   </mat-menu>
   <a mat-button routerLink="/admin"> Admin </a>
   <div class="filler"></div>
-  {{user.firstName}} {{user.lastName}}
+  {{user.attributes.firstName}} {{user.attributes.lastName}}
   <button mat-button (click)="signIn()" *ngIf="!loggedin">
     Sign In
   </button>

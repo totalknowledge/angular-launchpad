@@ -15,29 +15,38 @@ export class AuthService {
     this.instanceStamp = new Date();
     sessionStorage.setItem('instanceStamp', String(this.instanceStamp));
     this.applicationKey = "Hlsdkfo3498298oisdf9w2jfsoef983iqwja90fd3af";
+    this.user = JSON.parse(sessionStorage.getItem("user")) || {"attributes":{}};
   }
   signIn(usr, pwd): Observable<any> {
     this.user = {}
     return this.http.get('/api/v0/user').map(res => {
       this.user = res['data'].filter(function(obj){
-        return obj.userName === usr;
+        return obj.attributes.userName === usr;
       })[0];
-      if(this.user['passWord'] === Md5.hashStr(pwd)) {
+      if(this.user['attributes']['passWord'] === Md5.hashStr(pwd)) {
         this.user.token = 'Xas98798sdfu9uw9eH';
         sessionStorage.setItem('user', JSON.stringify(this.user));
         sessionStorage.setItem('token', this.token);
+        this.user['attributes']['status'] = "Signed In";
+        this.user['attributes']['lastLogin'] = new Date();
+        this.http.patch('/api/v0/user/'+this.user.id, {"attributes": this.user.attributes}).subscribe(
+          res => {}
+        );
       } else {
-        this.user = {};
+        this.user = {"attributes":{}};
       }
       return this.user;
     });
   }
-  signOut() {
+  signOut(): Observable<any> {
+    let id = this.user.id;
+    let atts = this.user.attributes;
+    atts.status = "Signed Out";
     this.user = null;
     this.token = null;
     sessionStorage.removeItem('user');
     sessionStorage.removeItem('token');
-    console.log('Logged Out');
+    return this.http.patch('/api/v0/user/'+id, {"attributes": atts});
   }
   getInstanceStamp() {
     return this.instanceStamp;
