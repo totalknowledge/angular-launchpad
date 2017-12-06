@@ -10,11 +10,11 @@
       <div class="admin-container mat-elevation-z8">
         <mat-table [dataSource]="dataSource" matSort>
           <ng-container matColumnDef={{col}} *ngFor="let col of displayedColumns">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{fieldLabel[col]}} </mat-header-cell>
-            <mat-cell *matCellDef="let row">
-              <span *ngIf="col=='id';then idcontent else attributescontent"></span>
-                <ng-template #idcontent>{{row[col]}} </ng-template>
-                <ng-template #attributescontent>{{row.attributes[col]}} </ng-template>
+            <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 10px"> {{fieldLabel[col]}} </mat-header-cell>
+            <mat-cell *matCellDef="let row" [ngSwitch]="col">
+              <span *ngSwitchCase="'id'"> {{row[col]}} </span>
+              <span *ngSwitchCase="'lastLogin'"> {{row.attributes[col] | date}} </span>
+              <span *ngSwitchDefault> {{row.attributes[col]}} </span>
             </mat-cell>
           </ng-container>
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
@@ -27,11 +27,17 @@
       <mat-card>
         <mat-card-title> <span *ngIf="!(user.id || edit)"> New </span> User Details </mat-card-title>
         <mat-card-content *ngIf="!user.id || edit; else userdisplay">
-          <mat-form-field *ngFor="let field of editableColumns">
+          <mat-form-field *ngFor="let field of editableColumns" [ngSwitch]="fieldType[field]">
+            <mat-select [(ngModel)]="user.attributes[field]"
+                        placeholder="{{fieldLabel[field]}}"
+                        *ngSwitchCase="'select'">
+              <mat-option *ngFor="let opt of fieldSelections[field]" [value]="opt">{{opt}}</mat-option>
+            </mat-select>
             <input type="{{fieldType[field]}}"
                    [(ngModel)]="user.attributes[field]"
                    matInput
-                   placeholder="{{fieldLabel[field]}}">
+                   placeholder="{{fieldLabel[field]}}"
+                   *ngSwitchDefault>
           </mat-form-field>
         </mat-card-content>
           <ng-template #userdisplay>

@@ -1,33 +1,37 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { CollectionService } from "../persistence/collection.service";
+import { AuthService } from "../persistence/auth.service";
 import { Md5 } from 'ts-md5/dist/md5';
 
 @Component({
   selector: 'app-main-admin-page',
-  providers: [CollectionService],
+  providers: [CollectionService, AuthService],
   templateUrl: './main-admin-page.component.html',
   styleUrls: ['./main-admin-page.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
 export class MainAdminPageComponent implements OnInit {
   service: CollectionService;
+  auth: AuthService;
   displayedColumns = [];
-  editableColumns = ['userName', 'firstName', 'lastName', 'email'];
+  editableColumns = [];
   fieldType = {};
   fieldLabel = {};
+  fieldSelections = {};
   dataSource: MatTableDataSource<any>;
   user: any;
+  signedinuser: any = {};
   backupcopy: string;
   edit: boolean;
   users:Array<any>;
-  next_id: number;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(service:CollectionService) {
+  constructor(service:CollectionService, auth:AuthService) {
     this.service = service;
+    this.auth = auth;
     this.service.setCollection("user");
     this.users = [];
     this.user = createNewUser();
@@ -42,17 +46,23 @@ export class MainAdminPageComponent implements OnInit {
         });
     this.service.getCollection("app.user.model.json", "assets/json/")
         .subscribe(res => {
-          let temp = [];
+          let read = [];
+          let create = [];
           for (var item in res.attributes) {
-            if (res.attributes[item].read[0]=="admin" ||
-                (res.attributes[item].read[0]=="inherited" &&
-                 res.read == "admin")) {
-              temp[res.attributes[item].order] = item;
+            if (this.auth.hasPermission(res.attributes[item].read, res.read)) {
+              read[res.attributes[item].order] = item;
+              if (this.auth.hasPermission(res.attributes[item].create, res.create)) {
+                create[res.attributes[item].order] = item;
+              }
             }
-              this.fieldLabel[item] = res.attributes[item].label;
-              this.fieldType[item] = res.attributes[item].type;
+            this.fieldLabel[item] = res.attributes[item].label;
+            this.fieldType[item] = res.attributes[item].type;
+            if (res.attributes[item].values) {
+              this.fieldSelections[item] = res.attributes[item].values;
+            }
           }
-          this.displayedColumns = temp.filter(String);
+          this.displayedColumns = read.filter(String);
+          this.editableColumns = create.filter(String);
         });
   }
 

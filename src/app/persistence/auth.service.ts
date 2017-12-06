@@ -17,6 +17,15 @@ export class AuthService {
     this.applicationKey = "Hlsdkfo3498298oisdf9w2jfsoef983iqwja90fd3af";
     this.user = JSON.parse(sessionStorage.getItem("user")) || {"attributes":{}};
   }
+  hasPermission(permissionList: Array<any>, parentPermList: Array<any>) {
+    if(permissionList.includes('inherited')) {
+      permissionList = permissionList.concat(parentPermList);
+    }
+    if(permissionList.includes(this.user.attributes.permission)) {
+      return true;
+    }
+    return false;
+  }
   signIn(usr, pwd): Observable<any> {
     this.user = {}
     return this.http.get('/api/v0/user').map(res => {
