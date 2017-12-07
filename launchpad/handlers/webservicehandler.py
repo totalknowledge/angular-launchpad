@@ -1,10 +1,18 @@
 from __future__ import absolute_import
 import json
+import collections
 
 from launchpad.adapters.picklejar import PickleJar
 
 import tornado.web
 
+def deepupdate(dictinto, dictfrom):
+    for attribute, value in dictfrom.items():
+        if isinstance(value, collections.Mapping):
+            dictinto[attribute] = deepupdate(dictinto.get(attribute, {}), value)
+        else:
+            dictinto[attribute] = value
+    return dictinto
 
 class WebServiceHandler(tornado.web.RequestHandler):
     """ Return arbitrary api calls in json format. """
@@ -98,7 +106,7 @@ class WebServiceHandler(tornado.web.RequestHandler):
         save_obj = pkl_jr.get_pickle()
         temp_obj = save_obj["data"][str(pkl_id)]
         merge_obj = json.loads(self.request.body.decode('utf-8'))
-        temp_obj.update(merge_obj)
+        deepupdate(temp_obj, merge_obj)
         save_obj["data"][str(pkl_id)] = temp_obj
         response_obj = {"data":{str(pkl_id):temp_obj}}
         pkl_jr.save_pickle(save_obj)

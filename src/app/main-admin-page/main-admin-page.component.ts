@@ -99,7 +99,8 @@ export class MainAdminPageComponent implements OnInit {
 
   resetPassWord(){
     this.user.attributes.passWord = Md5.hashStr("Friday");
-    this.service.patchRecord(this.user.id, {"attributes": this.user.attributes})
+    this.service.patchRecord(this.user.id, {"attributes": {
+      "passWord": this.user.attributes.passWord}})
       .subscribe( result => {
           this.user.passWord = Md5.hashStr("Friday");
       });
