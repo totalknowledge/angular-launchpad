@@ -44,7 +44,7 @@ export class MainAdminPageComponent implements OnInit {
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
         });
-    this.service.getCollection("app.user.model.json", "assets/json/")
+    this.service.getRecord("100", "schema")
         .subscribe(res => {
           let read = [];
           let create = [];
