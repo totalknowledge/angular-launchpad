@@ -9,3 +9,5 @@ npm-debug.log
 *.csr
 _trial_temp*
 coverage
+package-lock.json
+
