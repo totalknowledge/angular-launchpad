@@ -1,4 +1,4 @@
-<mat-tab-group class="admin-tab-group" style="margin-left: 5%; margin-right: 5%;">
+<mat-tab-group *ngIf="auth.hasPermission(); else permissionDeny" class="admin-tab-group" style="margin-left: 5%; margin-right: 5%;">
 
   <mat-tab class="mat-tab-label-active" label="User Admin">
     <div class="admin-tab-content">
@@ -77,3 +77,7 @@
     </div>
   </mat-tab>
 </mat-tab-group>
+
+<ng-template #permissionDeny>
+  You do not have the correct permissions for this area.
+</ng-template>

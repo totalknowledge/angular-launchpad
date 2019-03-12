@@ -18,6 +18,9 @@ export class AuthService {
     this.user = JSON.parse(sessionStorage.getItem("user")) || {"attributes":{}};
   }
   hasPermission(permissionList: Array<any>, parentPermList: Array<any>) {
+    if(this.user.attributes.permission == 'admin') {
+      return true;
+    }
     if(permissionList.includes('inherited')) {
       permissionList = permissionList.concat(parentPermList);
     }

@@ -1,11 +1,13 @@
 .admin-header {
   margin-top: 5px;
 }
+.mat-card-content {
+  width: 35%;
+}
 .mat-form-field {
   font-size: 14px;
   width: 100%;
 }
-
 .mat-table {
   overflow: auto;
   max-height: 500px;

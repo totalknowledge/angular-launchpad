@@ -1,4 +1,5 @@
 import { Component, Inject } from '@angular/core';
+import { Router } from "@angular/router"
 import { AuthService } from './persistence/auth.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Md5 } from 'ts-md5/dist/md5';
@@ -18,9 +19,10 @@ export class AppComponent {
   loggedin: boolean;
   displayName: string;
 
-  constructor(service:AuthService, dialog: MatDialog){
+  constructor(service:AuthService, dialog: MatDialog, private router: Router){
     this.service = service;
     this.dialog = dialog;
+    this.router = router;
     this.user = this.service.getUser();
     if(this.user.id){
       this.loggedin = true;
@@ -44,6 +46,7 @@ export class AppComponent {
   signOut(){
     this.service.signOut().subscribe(result => {});
     this.user = {"attributes":{}};
+    this.router.navigate(['/'])
     this.loggedin = false;
   }
 }
