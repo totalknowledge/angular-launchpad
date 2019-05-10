@@ -2,7 +2,7 @@
 
 Trying to figure out how to change the name.  This project is meant to be a rapid platform that Angular2 apps and Demo's requiring web services can be rapidly prototyped.  
 
-![Build Status](https://travis-ci.org/totalknowledge/angular-launchpad?branch=master)
+![Build Status](https://travis-ci.org/totalknowledge/angular-launchpad.svg?branch=master)
 
 ## Dependancies
 * Python (tested with 2.7.11+ and 3.5.2)
