@@ -1,6 +1,8 @@
-# angular-demos
+# angular-launchpad
 
-Trying to figure out how to change the name.  This project is meant to be a rapid platform that Angular2 apps and Demo's requiring web services can be rapidly prototyped.  The platform should actually scale pretty well __look for benchmarks in the future__ and will be even more production ready with the addition of MongoDB after initial prototype.
+Trying to figure out how to change the name.  This project is meant to be a rapid platform that Angular2 apps and Demo's requiring web services can be rapidly prototyped.  
+
+![Build Status](https://travis-ci.org/totalknowledge/angular-launchpad?branch=master)
 
 ## Dependancies
 * Python (tested with 2.7.11+ and 3.5.2)
@@ -10,7 +12,7 @@ Trying to figure out how to change the name.  This project is meant to be a rapi
 * pip (optional)
 
 ## Getting code and Starting
-Clone the repository with "git clone https://github.com/totalknowledge/angular-demos.git"
+Clone the repository with "git clone https://github.com/totalknowledge/angular-launchpad.git"
 
 ### Additional setup steps
 * pip install -r requirements.txt
