@@ -23,8 +23,8 @@ If you wish to use SSL then generate the key and certificate files in the keys d
 ## Starting Typescript Compiler and Backend Process
 npm start
 
-## Writing Angular2
-The Angular2 documentation site is an excellent resource on where to start.
+## Writing Angular
+The [Angular.io](https://angular.io/docs) documentation site is an excellent resource on where to start.
 
 ## Using the Dynamic API
 The web services can be accessed without any additional setup.  If you want to use a collection, lets say Books, then simply start using the api of /api/books or /api/v0/books the API supports POST, PATCH, PUT, GET, and DELETE.  Using our books example we have the following possible web services for Books
