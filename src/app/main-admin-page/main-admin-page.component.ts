@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { CollectionService } from "../persistence/collection.service";
 import { AuthService } from "../persistence/auth.service";
 import { Md5 } from 'ts-md5/dist/md5';

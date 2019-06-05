@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { Router } from "@angular/router"
 import { AuthService } from './persistence/auth.service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Md5 } from 'ts-md5/dist/md5';
 import 'rxjs/add/operator/map';
 
