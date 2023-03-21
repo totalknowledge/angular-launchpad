@@ -36,42 +36,39 @@ const appRoutes: Routes = [
 ];
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    MainPageComponent,
-    MainAdminPageComponent,
-    CorkboardComponent,
-    ThreadComponent,
-    PostComponent,
-    SignInDialog
-  ],
-  entryComponents: [SignInDialog],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatTabsModule,
-    MatTableModule,
-    MatSortModule,
-    MatPaginatorModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDialogModule,
-    MatSelectModule,
-    HttpClientModule,
-    FormsModule,
-    RouterModule.forRoot(
-      appRoutes,
-      { enableTracing: false, relativeLinkResolution: 'legacy' } // <-- debugging purposes only
- // <-- debugging purposes only
-    ),
-    environment.production
-      ? ServiceWorkerModule.register('/ngsw-worker.js')
-      : []
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        MainPageComponent,
+        MainAdminPageComponent,
+        CorkboardComponent,
+        ThreadComponent,
+        PostComponent,
+        SignInDialog
+    ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatMenuModule,
+        MatTabsModule,
+        MatTableModule,
+        MatSortModule,
+        MatPaginatorModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatDialogModule,
+        MatSelectModule,
+        HttpClientModule,
+        FormsModule,
+        RouterModule.forRoot(appRoutes, { enableTracing: false, relativeLinkResolution: 'legacy' } // <-- debugging purposes only
+        // <-- debugging purposes only
+        ),
+        environment.production
+            ? ServiceWorkerModule.register('/ngsw-worker.js')
+            : []
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

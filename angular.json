@@ -133,7 +133,6 @@
       }
     }
   },
-  "defaultProject": "angular2-launchpad-cli",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
