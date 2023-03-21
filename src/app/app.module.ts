@@ -62,7 +62,8 @@ const appRoutes: Routes = [
         MatSelectModule,
         HttpClientModule,
         FormsModule,
-        RouterModule.forRoot(appRoutes, { enableTracing: false, relativeLinkResolution: 'legacy' } // <-- debugging purposes only
+        RouterModule.forRoot(appRoutes, { enableTracing: false } // <-- debugging purposes only
+ // <-- debugging purposes only
         // <-- debugging purposes only
         ),
         environment.production
