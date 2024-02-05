@@ -1,15 +1,14 @@
 # angular-launchpad
 
-Trying to figure out how to change the name.  This project is meant to be a rapid platform that Angular2 apps and Demo's requiring web services can be rapidly prototyped.  
+Trying to figure out how to change the name.  This project is meant to be a rapid platform that Angular apps and Demo's requiring web services can be rapidly prototyped.  Up to date with Angular 16.
 
 ![Build Status](https://travis-ci.org/totalknowledge/angular-launchpad.svg?branch=master)
 
 ## Dependancies
-* Python (tested with 2.7.11+ and 3.5.2)
-* Visual C++ for Python 2.7
-* Node.js (tested with 4.2.6)
+* Python (tested with 3.10.6)
+* Node.js (tested with 18.16)
 * npm
-* pip (optional)
+* pip
 
 ## Getting code and Starting
 Clone the repository with "git clone https://github.com/totalknowledge/angular-launchpad.git"

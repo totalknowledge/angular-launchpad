@@ -19,10 +19,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule }   from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
-import { SignInDialog } from './app.component';
+import { SignInDialogComponent } from './app.component';
 import { MainPageComponent } from './main-page/main-page.component';
 import { MainAdminPageComponent } from './main-admin-page/main-admin-page.component';
 import { CorkboardComponent } from './examples/corkboard/corkboard.component';
@@ -30,9 +30,9 @@ import { ThreadComponent } from './examples/corkboard/thread/thread.component';
 import { PostComponent } from './examples/corkboard/post/post.component';
 
 const appRoutes: Routes = [
-  { path: 'examples/corkboard', component: CorkboardComponent },
-  { path: 'admin', component: MainAdminPageComponent },
-  { path: '', component: MainPageComponent }
+    { path: 'examples/corkboard', component: CorkboardComponent },
+    { path: 'admin', component: MainAdminPageComponent },
+    { path: '', component: MainPageComponent }
 ];
 
 @NgModule({
@@ -43,7 +43,7 @@ const appRoutes: Routes = [
         CorkboardComponent,
         ThreadComponent,
         PostComponent,
-        SignInDialog
+        SignInDialogComponent
     ],
     imports: [
         BrowserModule,
@@ -63,8 +63,8 @@ const appRoutes: Routes = [
         HttpClientModule,
         FormsModule,
         RouterModule.forRoot(appRoutes, { enableTracing: false } // <-- debugging purposes only
- // <-- debugging purposes only
-        // <-- debugging purposes only
+            // <-- debugging purposes only
+            // <-- debugging purposes only
         ),
         environment.production
             ? ServiceWorkerModule.register('/ngsw-worker.js')

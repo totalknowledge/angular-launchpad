@@ -3,54 +3,50 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { CollectionService } from "../persistence/collection.service";
-import { AuthService } from "../persistence/auth.service";
-import { Md5 } from 'ts-md5/dist/md5';
+import { AuthService, User } from "../persistence/auth.service";
+import { Md5 } from 'ts-md5';
 
 @Component({
   selector: 'app-main-admin-page',
-  providers: [CollectionService, AuthService],
   templateUrl: './main-admin-page.component.html',
   styleUrls: ['./main-admin-page.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
 export class MainAdminPageComponent implements OnInit {
-  service: CollectionService;
-  auth: AuthService;
   displayedColumns = [];
   editableColumns = [];
   fieldType = {};
   fieldLabel = {};
   fieldSelections = {};
-  dataSource: MatTableDataSource<any>;
-  user: any;
-  signedinuser: any = {};
+  dataSource: MatTableDataSource<User>;
+  user: User;
+  signedinuser: User = {} as User;
   backupcopy: string;
   edit: boolean;
-  users:Array<any>;
+  users: Array<User>;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(service:CollectionService, auth:AuthService) {
-    this.service = service;
-    this.auth = auth;
+  constructor(private service: CollectionService, private auth: AuthService) {
     this.service.setCollection("user");
     this.users = [];
     this.user = createNewUser();
   }
   ngOnInit() {
     this.service.getCollection()
-        .subscribe(users => {
-          this.users = users;
-          this.dataSource = new MatTableDataSource(this.users);
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-        });
+      .subscribe(users => {
+        this.users = users;
+        this.dataSource = new MatTableDataSource(this.users);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      });
     this.service.getRecord("100", "schema")
-        .subscribe(res => {
-          let read = [];
-          let create = [];
-          for (var item in res.attributes) {
+      .subscribe({
+        next: res => {
+          const read = [];
+          const create = [];
+          for (const item in res.attributes) {
             if (this.auth.hasPermission(res.attributes[item].read, res.read)) {
               read[res.attributes[item].order] = item;
               if (this.auth.hasPermission(res.attributes[item].create, res.create)) {
@@ -65,7 +61,8 @@ export class MainAdminPageComponent implements OnInit {
           }
           this.displayedColumns = read.filter(String);
           this.editableColumns = create.filter(String);
-        });
+        }
+      });
   }
 
   applyFilter(filterValue: string) {
@@ -74,41 +71,45 @@ export class MainAdminPageComponent implements OnInit {
     this.dataSource.filter = filterValue;
   }
 
-  populateUser(usr:any){
+  populateUser(usr: User) {
     this.user = usr;
   }
 
-  editUser(){
+  editUser() {
     this.edit = true;
     this.backupcopy = JSON.stringify(this.user);
   }
 
-  cancelEdit(){
+  cancelEdit() {
     this.user = JSON.parse(this.backupcopy);
     this.edit = false;
   }
 
-  clearUser(){
+  clearUser() {
     this.user = createNewUser();
   }
 
-  patchUser(){
-    this.service.patchRecord(this.user.id, this.user)
-      .subscribe( result => {
-          this.edit = false;
+  patchUser() {
+    this.service.patchRecord(this.user.id, this.user).subscribe({
+      next: () => {
+        this.edit = false;
+      }
+    });
+  }
+
+  resetpassword() {
+    this.user.attributes.password = Md5.hashStr("Friday");
+    this.service.patchRecord(this.user.id, {
+      "attributes": {
+        "password": this.user.attributes.password
+      }
+    })
+      .subscribe(() => {
+        this.user.password = Md5.hashStr("Friday");
       });
   }
 
-  resetPassWord(){
-    this.user.attributes.passWord = Md5.hashStr("Friday");
-    this.service.patchRecord(this.user.id, {"attributes": {
-      "passWord": this.user.attributes.passWord}})
-      .subscribe( result => {
-          this.user.passWord = Md5.hashStr("Friday");
-      });
-  }
-
-  createUser(){
+  createUser() {
     this.service.createRecord(this.user).subscribe(
       result => {
         this.user.id = result.id;
@@ -120,6 +121,6 @@ export class MainAdminPageComponent implements OnInit {
   }
 }
 
-function createNewUser(): any {
-  return { "attributes": {} };
+export function createNewUser(): User {
+  return { "attributes": {} } as User;
 }

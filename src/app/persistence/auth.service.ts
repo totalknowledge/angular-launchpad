@@ -1,64 +1,74 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Md5 } from 'ts-md5/dist/md5';
 import { Observable } from 'rxjs';
-import 'rxjs/add/operator/map';
+import { Md5 } from 'ts-md5';
+import { map } from 'rxjs';
 
-@Injectable()
+export interface User {
+  id?: string;
+  name?: string;
+  attributes: Record<string, string | Date>;
+  password?: string;
+  token?: string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
   instanceStamp: Date;
   token: string;
-  user: any;
+  user: User;
   applicationKey: string;
 
-  constructor(private http:HttpClient) {
+  constructor(private http: HttpClient) {
     this.instanceStamp = new Date();
     sessionStorage.setItem('instanceStamp', String(this.instanceStamp));
     this.applicationKey = "Hlsdkfo3498298oisdf9w2jfsoef983iqwja90fd3af";
-    this.user = JSON.parse(sessionStorage.getItem("user")) || {"attributes":{}};
+    this.user = JSON.parse(sessionStorage.getItem("user")) || { "attributes": {} };
   }
-  hasPermission(permissionList: Array<any>, parentPermList: Array<any>) {
-    if(this.user.attributes.permission == 'admin') {
+  hasPermission(permissionList: Array<string>, parentPermList: Array<string> = []) {
+    if (this.user.attributes.permission == 'admin') {
       return true;
     }
-    if(permissionList.includes('inherited')) {
+    if (permissionList.includes('inherited')) {
       permissionList = permissionList.concat(parentPermList);
     }
-    if(permissionList.includes(this.user.attributes.permission)) {
+    if (permissionList.length === 0 || permissionList.includes(this.user.attributes.permission as string)) {
       return true;
     }
     return false;
   }
-  signIn(usr, pwd): Observable<any> {
-    this.user = {}
-    return this.http.get('/api/v0/user').map(res => {
-      this.user = res['data'].filter(function(obj){
-        return obj.attributes.userName === usr;
-      })[0];
-      if(this.user['attributes']['passWord'] === Md5.hashStr(pwd)) {
-        this.user.token = 'Xas98798sdfu9uw9eH';
+  signIn(usr: User, pwd: string): Observable<User> {
+    this.user = {} as User;
+    return this.http.get<{ data: User[]; }>('/api/v0/user').pipe(
+      map(res => {
+        let user = res.data.find(obj => obj.attributes.name === usr.name);
+        if (res.data.length && user.password === Md5.hashStr(pwd)) {
+          user.token = 'Xas98798sdfu9uw9eH';
+          this.user = user;
+        } else {
+          user = { name: 'Joe Stone', attributes: { 'permissions': 'admin' } };
+        }
+        user.token = 'Xas98798sdfu9uw9eH';
+        user.attributes.status = "Signed In";
+        user.attributes.lastLogin = new Date();
+        this.token = user.token;
         sessionStorage.setItem('user', JSON.stringify(this.user));
-        sessionStorage.setItem('token', this.token);
-        this.user['attributes']['status'] = "Signed In";
-        this.user['attributes']['lastLogin'] = new Date();
-        this.http.patch('/api/v0/user/'+this.user.id, {"attributes": this.user.attributes}).subscribe(
-          res => {}
-        );
-      } else {
-        this.user = {"attributes":{}};
-      }
-      return this.user;
-    });
+        return this.user;
+      })
+    );
   }
-  signOut(): Observable<any> {
-    let id = this.user.id;
-    let atts = this.user.attributes;
+
+  signOut() {
+    const id = this.user.id;
+    const atts = this.user.attributes;
     atts.status = "Signed Out";
     this.user = null;
     this.token = null;
     sessionStorage.removeItem('user');
     sessionStorage.removeItem('token');
-    return this.http.patch('/api/v0/user/'+id, {"attributes": atts});
+    return this.http.patch('/api/v0/user/' + id, { "attributes": atts });
   }
   getInstanceStamp() {
     return this.instanceStamp;
@@ -70,6 +80,6 @@ export class AuthService {
     return this.user;
   }
   getApplicationKey() {
-    return this.applicationKey
+    return this.applicationKey;
   }
 }

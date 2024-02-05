@@ -42,7 +42,7 @@
         </mat-card-content>
           <ng-template #userdisplay>
             <div  class="user-details" *ngFor="let field of displayedColumns">
-              <span *ngIf="field=='id'; then idfield else attfield"></span>
+              <span *ngIf="field==='id'; then idfield else attfield"></span>
               <ng-template #idfield>{{fieldLabel[field]}}: {{user[field]}}</ng-template>
               <ng-template #attfield>{{fieldLabel[field]}}: {{user.attributes[field]}}</ng-template>
             </div>
@@ -55,7 +55,7 @@
           <mat-card-actions>
             <span *ngIf="user.id; else newuser">
               <button mat-raised-button color="accent" (click)="editUser()"> Edit </button>
-              <button mat-raised-button color="accent" (click)="resetPassWord()"> Reset Password </button>
+              <button mat-raised-button color="accent" (click)="resetpassword()"> Reset password </button>
             </span>
             <button mat-button (click)="clearUser()"> Clear </button>
           </mat-card-actions>

@@ -13,7 +13,7 @@
     ],
     "lib": [
       "ES2022",
-      "dom"
+      "Dom"
     ],
     "module": "ES2022",
     "baseUrl": "./",

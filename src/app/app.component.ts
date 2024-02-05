@@ -1,9 +1,7 @@
 import { Component, Inject } from '@angular/core';
-import { Router } from "@angular/router"
-import { AuthService } from './persistence/auth.service';
+import { Router } from "@angular/router";
+import { AuthService, User } from './persistence/auth.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Md5 } from 'ts-md5/dist/md5';
-import 'rxjs/add/operator/map';
 
 @Component({
   selector: 'app-root',
@@ -12,55 +10,57 @@ import 'rxjs/add/operator/map';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  service: AuthService;
   dialog: MatDialog;
-  user: any;
+  user: User;
   passwd: string;
   loggedin: boolean;
   displayName: string;
 
-  constructor(service:AuthService, dialog: MatDialog, private router: Router){
-    this.service = service;
+  constructor(protected service: AuthService, dialog: MatDialog, private router: Router) {
     this.dialog = dialog;
-    this.router = router;
     this.user = this.service.getUser();
-    if(this.user.id){
+    if (this.user.id) {
       this.loggedin = true;
     }
   }
-  signIn(){
-    let dialogRef = this.dialog.open(SignInDialog, {
+  signIn() {
+    const dialogRef = this.dialog.open(SignInDialogComponent, {
       width: '20%',
       data: { name: "", password: "" }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      this.service.signIn(result.name, result.password).subscribe(result => {
-        this.user = result;
-        if(this.user.id){
-          this.loggedin = true;
-        }
-      });
+    dialogRef.afterClosed().subscribe({
+      next: result => {
+        this.service.signIn(result.name, result.password).subscribe(result => {
+          this.user = result;
+          if (this.user.id) {
+            this.loggedin = true;
+          }
+        });
+      }
     });
   }
-  signOut(){
-    this.service.signOut().subscribe(result => {});
-    this.user = {"attributes":{}};
-    this.router.navigate(['/'])
-    this.loggedin = false;
+  signOut() {
+    this.service.signOut().subscribe({
+      next: () => {
+        this.user = { "attributes": {} };
+        this.router.navigate(['/']);
+        this.loggedin = false;
+      }
+    });
   }
 }
 
 /* Dialog Popup for sign in. */
 @Component({
   selector: 'dialog-overview-example-dialog',
-  templateUrl: './app.signindialog.html',
+  templateUrl: './app.sign-in-dialog.component.html',
 })
-export class SignInDialog {
+export class SignInDialogComponent {
 
   constructor(
-    public dialogRef: MatDialogRef<SignInDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any) { }
+    public dialogRef: MatDialogRef<SignInDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: User) { }
 
   onNoClick(): void {
     this.dialogRef.close();

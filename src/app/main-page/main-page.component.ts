@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-main-page',
@@ -6,14 +6,9 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
   styleUrls: ['./main-page.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class MainPageComponent implements OnInit {
+export class MainPageComponent {
   title = 'Angular Launchpad';
   constructor() {
 
   }
-
-  ngOnInit() {
-
-  }
-
 }
