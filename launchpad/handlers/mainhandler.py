@@ -16,8 +16,15 @@ class MainHandler(tornado.web.RequestHandler):
 
     @staticmethod
     def get_file_path(path):
-        path_segment = path.split('?',1)[0]
-        return os.path.join(settings.doc_dir, path_segment)
+        path_segment = path.split('?', 1)[0]
+        cleaned_path = os.path.normpath(path_segment)
+        
+        # Ensure the cleaned path doesn't attempt directory traversal
+        if '..' in cleaned_path or cleaned_path.startswith('/'):
+            raise ValueError("Invalid path")
+        
+        full_path = os.path.join(settings.doc_dir, cleaned_path)
+        return full_path
 
     def get(self, path):
 
