@@ -17,7 +17,7 @@ export class PostComponent {
    backupcopy = "";
 
    constructor(private service: CollectionService) {
-      service.setCollection('post');
+      service.setCollection('posts');
    }
 
    deletePost() {

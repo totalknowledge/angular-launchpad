@@ -1,28 +1,28 @@
-import { Component, Inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
 import { AuthService, User } from './persistence/auth.service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-root',
-  providers: [AuthService],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  dialog: MatDialog;
+export class AppComponent implements OnInit {
   user: User;
   passwd: string;
   loggedin: boolean;
   displayName: string;
 
-  constructor(protected service: AuthService, dialog: MatDialog, private router: Router) {
-    this.dialog = dialog;
+  constructor(protected service: AuthService, private dialog: MatDialog, private router: Router) { }
+
+  ngOnInit(): void {
     this.user = this.service.getUser();
     if (this.user.id) {
       this.loggedin = true;
     }
   }
+
   signIn() {
     const dialogRef = this.dialog.open(SignInDialogComponent, {
       width: '20%',
@@ -42,27 +42,11 @@ export class AppComponent {
   }
   signOut() {
     this.service.signOut().subscribe({
-      next: () => {
-        this.user = { "attributes": {} };
+      next: (signedOutObject) => {
+        this.user = signedOutObject;
         this.router.navigate(['/']);
         this.loggedin = false;
       }
     });
-  }
-}
-
-/* Dialog Popup for sign in. */
-@Component({
-  selector: 'dialog-overview-example-dialog',
-  templateUrl: './app.sign-in-dialog.component.html',
-})
-export class SignInDialogComponent {
-
-  constructor(
-    public dialogRef: MatDialogRef<SignInDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: User) { }
-
-  onNoClick(): void {
-    this.dialogRef.close();
   }
 }

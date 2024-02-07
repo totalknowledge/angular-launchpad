@@ -60,7 +60,7 @@ export class AuthService {
     );
   }
 
-  signOut() {
+  signOut(): Observable<User> {
     const id = this.user.id;
     const atts = this.user.attributes;
     atts.status = "Signed Out";
@@ -68,7 +68,7 @@ export class AuthService {
     this.token = null;
     sessionStorage.removeItem('user');
     sessionStorage.removeItem('token');
-    return this.http.patch('/api/v0/user/' + id, { "attributes": atts });
+    return this.http.patch<User>('/api/v0/user/' + id, { "attributes": atts });
   }
   getInstanceStamp() {
     return this.instanceStamp;

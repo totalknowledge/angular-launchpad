@@ -22,12 +22,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
-import { SignInDialogComponent } from './app.component';
 import { MainPageComponent } from './main-page/main-page.component';
 import { MainAdminPageComponent } from './main-admin-page/main-admin-page.component';
 import { CorkboardComponent } from './examples/corkboard/corkboard.component';
 import { ThreadComponent } from './examples/corkboard/thread/thread.component';
 import { PostComponent } from './examples/corkboard/post/post.component';
+import { DialogComponent } from './examples/dialog/dialog.component';
 
 const appRoutes: Routes = [
     { path: 'examples/corkboard', component: CorkboardComponent },
@@ -43,7 +43,7 @@ const appRoutes: Routes = [
         CorkboardComponent,
         ThreadComponent,
         PostComponent,
-        SignInDialogComponent
+        DialogComponent
     ],
     imports: [
         BrowserModule,
