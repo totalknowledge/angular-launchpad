@@ -1,1 +1,11 @@
-<p>dialog works!</p>
+<div class="dialog-overlay" (click)="closeDialog()">
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    <ng-container *ngIf="content as templateContent">
+      <ng-container *ngTemplateOutlet="templateContent"></ng-container>
+    </ng-container>
+    <!-- Dynamic component content handling is a bit more complex and might require a directive or additional logic -->
+    <div class="dialog-actions">
+      <button *ngFor="let button of buttons" (click)="button.onClick()">{{ button.label }}</button>
+    </div>
+  </div>
+</div>

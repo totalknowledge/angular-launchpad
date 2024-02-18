@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from "@angular/router";
 import { AuthService, User } from './persistence/auth.service';
-import { MatDialog } from '@angular/material/dialog';
+import { DialogService } from './examples/dialog/dialog.service';
 
 @Component({
   selector: 'app-root',
@@ -13,8 +13,9 @@ export class AppComponent implements OnInit {
   passwd: string;
   loggedin: boolean;
   displayName: string;
+  @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<unknown>;
 
-  constructor(protected service: AuthService, private dialog: MatDialog, private router: Router) { }
+  constructor(protected service: AuthService, private dialog: DialogService, private router: Router) { }
 
   ngOnInit(): void {
     this.user = this.service.getUser();
@@ -24,14 +25,10 @@ export class AppComponent implements OnInit {
   }
 
   signIn() {
-    const dialogRef = this.dialog.open(SignInDialogComponent, {
-      width: '20%',
-      data: { name: "", password: "" }
-    });
-
-    dialogRef.afterClosed().subscribe({
-      next: result => {
-        this.service.signIn(result.name, result.password).subscribe(result => {
+    this.dialog.open(this.dialogTemplate, [{ label: 'Close', onClick: () => this.dialog.close() }], { name: '', password: '' }).subscribe(result => {
+      // Process the result
+      if (result) {
+        this.service.signIn(result['name'], result['password']).subscribe(result => {
           this.user = result;
           if (this.user.id) {
             this.loggedin = true;
@@ -40,6 +37,7 @@ export class AppComponent implements OnInit {
       }
     });
   }
+
   signOut() {
     this.service.signOut().subscribe({
       next: (signedOutObject) => {

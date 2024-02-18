@@ -1,5 +1,91 @@
-@import "@angular/material/prebuilt-themes/deeppurple-amber.css";
+/* Basic Reset */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
 
-/* html margin reset */
+/* Color Scheme inspired by Deep Purple and Amber */
+:root {
+  --primary-color: #673AB7; /* Deep Purple */
+  --primary-color-dark: #5e35b1; /* Manually adjusted darker shade */
+  --accent-color: #FFC107; /* Amber */
+  --accent-color-dark: #ffa000; /* Manually adjusted darker shade */
+  --light-text: #FFFFFF;
+  --dark-text: #212121;
+}
 
-body, html {margin: 0}
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary-color);
+}
+
+body {
+  color: var(--dark-text);
+  background-color: #F5F5F5;
+}
+
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Buttons */
+.button {
+  background-color: var(--primary-color);
+  color: var(--light-text);
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.button-accent {
+  background-color: var(--accent-color);
+}
+
+.button:hover {
+  background-color: var(--primary-color-dark);
+}
+
+.button-accent:hover {
+  background-color: var(--accent-color-dark);
+}
+
+/* Forms */
+input[type="text"], input[type="email"], textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type="submit"] {
+  width: 100%;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  background-color: var(--primary-color-dark);
+}
+
+/* Utility Classes */
+.text-center {
+  text-align: center;
+}

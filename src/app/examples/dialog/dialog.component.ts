@@ -1,18 +1,26 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { User } from '../../persistence/auth.service';
+import { Component, Input, Output, EventEmitter, TemplateRef, ViewChild, Type } from '@angular/core';
 
 @Component({
   selector: 'app-dialog',
   templateUrl: './dialog.component.html',
 })
 export class DialogComponent {
-  @Output() closeDialog = new EventEmitter<void>();
-  // Assume User data is passed through some service or parent component
-  user: User;
+  @Input() content: TemplateRef<unknown> | Type<unknown>;
+  @Input() buttons: { label: string, onClick: () => void; }[] = [];
+  @Output() dClose = new EventEmitter<unknown>();
 
-  constructor() { }
+  @ViewChild('dialogContent') dialogContent;
 
-  onNoClick(): void {
-    this.closeDialog.emit();
+  closeDialog(result?: unknown) {
+    this.dClose.emit(result);
+  }
+
+  onOverlayClicked(event: MouseEvent): void {
+    console.log(event);
+    this.dClose.emit();
+  }
+
+  onDialogContentClicked(event: MouseEvent): void {
+    event.stopPropagation();
   }
 }

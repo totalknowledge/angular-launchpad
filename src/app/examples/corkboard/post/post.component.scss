@@ -1,0 +1,93 @@
+/* Basic Card Styles */
+.mat-card {
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  margin: 20px;
+  padding: 15px;
+  background: #fff;
+}
+
+.mat-card-title {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.mat-card-content {
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.mat-card-actions {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 15px;
+}
+
+/* Button Styles */
+button[mat-raised-button], a[mat-button] {
+  border: none;
+  border-radius: 4px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  text-align: center;
+  text-decoration: none;
+  margin-right: 8px;
+}
+
+button[mat-raised-button] {
+  background-color: #3f51b5;
+  color: white;
+}
+
+button[mat-raised-button][color="primary"] {
+  background-color: #3f51b5;
+}
+
+button[mat-raised-button][color="accent"] {
+  background-color: #ff4081;
+}
+
+a[mat-button] {
+  color: #3f51b5;
+  background-color: transparent;
+}
+
+button[mat-raised-button]:hover, a[mat-button]:hover {
+  background-color: #303f9f;
+}
+
+/* Form Field Styles */
+.mat-form-field {
+  display: block;
+  margin-bottom: 15px;
+}
+
+.mat-form-field input[type="text"],
+.mat-form-field textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.mat-form-field input[type="text"]:focus,
+.mat-form-field textarea:focus {
+  outline: none;
+  border-color: #3f51b5;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #9e9e9e;
+  opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #9e9e9e;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: #9e9e9e;
+}
