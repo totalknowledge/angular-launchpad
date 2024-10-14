@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
 import { ThreadComponent } from './thread.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { PostComponent } from '../post/post.component';
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
 import { Post } from '../post/post';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('ThreadComponent', () => {
   let component: ThreadComponent;
@@ -17,19 +18,17 @@ describe('ThreadComponent', () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      declarations: [
+    declarations: [
         PostComponent,
         ThreadComponent
-      ],
-      imports: [
-        FormsModule,
-        HttpClientTestingModule,
+    ],
+    imports: [FormsModule,
         MatFormFieldModule,
         MatInputModule,
         MatCardModule,
-        NoopAnimationsModule
-      ]
-    })
+        NoopAnimationsModule],
+    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+})
       .compileComponents();
   });
 

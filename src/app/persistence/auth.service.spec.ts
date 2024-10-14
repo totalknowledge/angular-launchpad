@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 
 import { AuthService, User } from './auth.service';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Md5 } from 'ts-md5';
 import { of } from 'rxjs';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -12,13 +13,13 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
-        AuthService
-      ]
-    });
+    imports: [],
+    providers: [
+        AuthService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
     authService = TestBed.inject(AuthService);
     fakeHttpClient = TestBed.inject(HttpTestingController);
   });

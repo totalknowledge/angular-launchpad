@@ -18,7 +18,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
@@ -35,8 +35,7 @@ const appRoutes: Routes = [
     { path: '', component: MainPageComponent }
 ];
 
-@NgModule({
-    declarations: [
+@NgModule({ declarations: [
         AppComponent,
         MainPageComponent,
         MainAdminPageComponent,
@@ -45,8 +44,7 @@ const appRoutes: Routes = [
         PostComponent,
         DialogComponent
     ],
-    imports: [
-        BrowserModule,
+    bootstrap: [AppComponent], imports: [BrowserModule,
         BrowserAnimationsModule,
         MatToolbarModule,
         MatButtonModule,
@@ -60,16 +58,12 @@ const appRoutes: Routes = [
         MatInputModule,
         MatDialogModule,
         MatSelectModule,
-        HttpClientModule,
         FormsModule,
         RouterModule.forRoot(appRoutes, { enableTracing: false } // <-- debugging purposes only
-            // <-- debugging purposes only
-            // <-- debugging purposes only
+        // <-- debugging purposes only
+        // <-- debugging purposes only
         ),
         environment.production
             ? ServiceWorkerModule.register('/ngsw-worker.js')
-            : []
-    ],
-    bootstrap: [AppComponent]
-})
+            : []], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { }

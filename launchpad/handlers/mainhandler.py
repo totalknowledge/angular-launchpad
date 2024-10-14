@@ -12,7 +12,7 @@ class MainHandler(tornado.web.RequestHandler):
     def initialize(self):
         self.mimetypes = settings.CONF_OPTIONS["mimetypes"]
         self.default_extension = settings.CONF_OPTIONS["defaultextension"]
-        self.dir_base = "www/"
+        self.dir_base = "www/browser/"
 
     @staticmethod
     def get_file_path(path):

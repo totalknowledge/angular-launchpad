@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PostComponent } from './post.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Post } from './post';
 import { of } from 'rxjs';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('PostComponent', () => {
   let component: PostComponent;
@@ -16,18 +17,16 @@ describe('PostComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
+    declarations: [
         PostComponent
-      ],
-      imports: [
-        FormsModule,
-        HttpClientTestingModule,
+    ],
+    imports: [FormsModule,
         MatCardModule,
         MatFormFieldModule,
         MatInputModule,
-        NoopAnimationsModule
-      ]
-    })
+        NoopAnimationsModule],
+    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+})
       .compileComponents();
   });
 

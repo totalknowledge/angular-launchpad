@@ -1,11 +1,7 @@
 module.exports = {
   preset: 'jest-preset-angular',
-  roots: ['src'],
-  testMatch: ['**/+(*.)+(spec).+(ts)'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  globalSetup: 'jest-preset-angular/global-setup',
   collectCoverage: true,
-  coverageDirectory: 'coverage',
-  collectCoverageFrom: [
-    'src/app/**/*.ts',
-    "!**/*.module.ts",
-  ]
+  coverageReporters: ['html', 'text'],
 };

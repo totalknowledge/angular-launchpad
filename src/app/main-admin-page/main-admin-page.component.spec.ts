@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MainAdminPageComponent, createNewUser } from './main-admin-page.component';
-import { HttpClient } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -30,25 +30,24 @@ describe('MainAdminPageComponent', () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      declarations: [
+    declarations: [
         MainAdminPageComponent
-      ],
-      imports: [
-        HttpClientTestingModule,
-        MatCardModule,
+    ],
+    imports: [MatCardModule,
         MatFormFieldModule,
         MatInputModule,
         MatPaginatorModule,
         MatTableModule,
         MatTabsModule,
-        NoopAnimationsModule
-      ],
-      providers: [
+        NoopAnimationsModule],
+    providers: [
         HttpClient,
         { provide: AuthService, useValue: auth },
-        { provide: CollectionService, useValue: service }
-      ]
-    }).compileComponents();
+        { provide: CollectionService, useValue: service },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+}).compileComponents();
 
     fixture = TestBed.createComponent(MainAdminPageComponent);
     component = fixture.componentInstance;

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AppComponent, SignInDialogComponent } from './app.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
@@ -15,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 interface MatDialogMock extends MatDialog {
   open: jest.Mock;
@@ -61,26 +62,25 @@ describe('AppComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
+    declarations: [
         AppComponent,
         ThreadComponent,
         PostComponent
-      ],
-      imports: [
-        HttpClientTestingModule,
-        MatDialogModule,
+    ],
+    imports: [MatDialogModule,
         MatMenuModule,
         MatToolbarModule,
         RouterTestingModule.withRoutes([{
-          path: '', component: AppComponent
-        }])
-      ],
-      providers: [
+                path: '', component: AppComponent
+            }])],
+    providers: [
         { provide: MatDialog, useClass: MatDialogStub },
         { provide: MAT_DIALOG_DATA, useValue: {} },
-        { provide: AuthService, useClass: AuthServiceStub }
-      ]
-    }).compileComponents();
+        { provide: AuthService, useClass: AuthServiceStub },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+}).compileComponents();
 
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
