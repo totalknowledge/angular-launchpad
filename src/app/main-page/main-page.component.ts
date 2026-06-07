@@ -4,7 +4,8 @@ import { Component, ViewEncapsulation } from '@angular/core';
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class MainPageComponent {
   title = 'Angular Launchpad';

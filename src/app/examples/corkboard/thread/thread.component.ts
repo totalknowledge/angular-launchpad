@@ -7,7 +7,8 @@ import { Post } from '../post/post';
    providers: [CollectionService],
    templateUrl: './thread.component.html',
    styleUrls: ['./thread.component.scss'],
-   encapsulation: ViewEncapsulation.None
+   encapsulation: ViewEncapsulation.None,
+   standalone: false
 })
 export class ThreadComponent implements OnInit {
    posts: Array<Post>;

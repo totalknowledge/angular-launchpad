@@ -1,11 +1,12 @@
-import { Component, Input, Output, EventEmitter, TemplateRef, ViewChild, Type } from '@angular/core';
+import { Component, Input, Output, EventEmitter, TemplateRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-dialog',
   templateUrl: './dialog.component.html',
+  standalone: false
 })
 export class DialogComponent {
-  @Input() content: TemplateRef<unknown> | Type<unknown>;
+  @Input() content!: TemplateRef<unknown>;
   @Input() buttons: { label: string, onClick: () => void; }[] = [];
   @Output() dClose = new EventEmitter<unknown>();
 
@@ -16,7 +17,7 @@ export class DialogComponent {
   }
 
   onOverlayClicked(event: MouseEvent): void {
-    console.log(event);
+    void event;
     this.dClose.emit();
   }
 

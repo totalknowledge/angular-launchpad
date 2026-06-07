@@ -6,18 +6,18 @@
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": false,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "strictPropertyInitialization": false,
     "experimentalDecorators": true,
     "target": "ES2022",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
     "lib": [
       "ES2022",
       "Dom"
     ],
     "module": "ES2022",
-    "baseUrl": "./",
     "useDefineForClassFields": false
   }
 }

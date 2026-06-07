@@ -17,6 +17,12 @@ Clone the repository with "git clone https://github.com/totalknowledge/angular-l
 * pip install -r requirements.txt
 * npm install
 
+### Running tests
+* Angular tests and coverage: `npm test`
+* Python backend tests: `python test.py`
+* Python backend coverage: `npm run test:py`
+* Python backend HTML coverage report: `npm run test:py:html`
+
 If you wish to use SSL then generate the key and certificate files in the keys directory add them to the launchpad.conf file as "certfile" and "keyfile".  Then define "ssl_port" in launchpad.conf as well.
 
 ## Starting Typescript Compiler and Backend Process

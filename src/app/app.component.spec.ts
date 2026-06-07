@@ -1,90 +1,83 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { AppComponent, SignInDialogComponent } from './app.component';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatMenuModule } from '@angular/material/menu';
-import { RouterTestingModule } from '@angular/router/testing';
-import { AuthService, User } from './persistence/auth.service';
-import { Observable, Subject, of } from 'rxjs';
-import { ThreadComponent } from './examples/corkboard/thread/thread.component';
-import { Router } from '@angular/router';
-import { PostComponent } from './examples/corkboard/post/post.component';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { FormsModule } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { of } from 'rxjs';
 
-interface MatDialogMock extends MatDialog {
-  open: jest.Mock;
-}
+import { AppComponent } from './app.component';
+import { DialogService } from './examples/dialog/dialog.service';
+import { AuthService, User } from './persistence/auth.service';
 
-export class MatDialogStub {
-  open() {
-    return {
-      afterClosed: () => of({ name: 'test', password: 'password' })
-    } as MatDialogRef<SignInDialogComponent>;
-  }
-}
+@Component({
+  template: '',
+  standalone: false
+})
+class EmptyRouteComponent {}
 
 class AuthServiceStub {
-  signIn() {
-    return of({
-      id: '1',
-      name: 'Test User',
-      attributes: { permission: 'admin' },
-      token: 'mockToken'
-    });
-  }
-  signOut(): Observable<User> {
-    return of({
-      attributes: {
-        "status": "Signed Out",
-      }
-    } as User);
-  }
+  user: User = {
+    id: '1',
+    name: 'Test User',
+    attributes: { permission: 'admin' },
+    token: 'mockToken',
+  };
+
+  signIn = vi.fn(() => of(this.user));
+
+  signOut = vi.fn(() => of({
+    attributes: {
+      status: 'Signed Out',
+    },
+  } as User));
+
   getUser() {
-    return {
-      id: '1',
-      name: 'Test User',
-      attributes: { permission: 'admin' },
-      token: 'mockToken'
-    };
+    return this.user;
   }
+}
+
+class DialogServiceStub {
+  open = vi.fn(() => of({ name: 'testUser', password: 'testPassword' }));
+  close = vi.fn();
 }
 
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
-  let mockRoute: Router;
+  let authService: AuthServiceStub;
+  let dialogService: DialogServiceStub;
+  let router: Router;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [
-        AppComponent,
-        ThreadComponent,
-        PostComponent
-    ],
-    imports: [MatDialogModule,
+      declarations: [AppComponent, EmptyRouteComponent],
+      imports: [
+        CommonModule,
+        FormsModule,
+        MatButtonModule,
         MatMenuModule,
         MatToolbarModule,
-        RouterTestingModule.withRoutes([{
-                path: '', component: AppComponent
-            }])],
-    providers: [
-        { provide: MatDialog, useClass: MatDialogStub },
-        { provide: MAT_DIALOG_DATA, useValue: {} },
+        RouterTestingModule.withRoutes([{ path: '', component: EmptyRouteComponent }]),
+      ],
+      providers: [
         { provide: AuthService, useClass: AuthServiceStub },
+        { provide: DialogService, useClass: DialogServiceStub },
         provideHttpClient(withInterceptorsFromDi()),
-        provideHttpClientTesting()
-    ]
-}).compileComponents();
+        provideHttpClientTesting(),
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
-    mockRoute = TestBed.inject(Router);
+    authService = TestBed.inject(AuthService) as unknown as AuthServiceStub;
+    dialogService = TestBed.inject(DialogService) as unknown as DialogServiceStub;
+    router = TestBed.inject(Router);
     fixture.detectChanges();
   });
 
@@ -92,83 +85,80 @@ describe('AppComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should set logged in as true if user.id is present', () => {
+  it('should mark the user logged in when a stored user has an id', () => {
     expect(component.loggedin).toBeTruthy();
   });
 
-  it('should open the dialog when signIn() is called', () => {
-    const afterClosedSubject = new Subject<{ name: string, password: string; }>();
-    const dialogRefMock: { afterClosed: () => Subject<{ name: string, password: string; }>; } = {
-      afterClosed: () => afterClosedSubject
-    };
-    const dialogMock: Partial<MatDialogMock> = {
-      open: jest.fn(() => dialogRefMock)
-    };
-    component.dialog = dialogMock as MatDialogMock;
+  it('should open the sign-in dialog and call AuthService with user credentials', () => {
+    component.signIn();
+
+    expect(dialogService.open).toHaveBeenCalled();
+    expect(authService.signIn).toHaveBeenCalledWith(
+      { name: 'testUser', attributes: {} },
+      'testPassword',
+    );
+    expect(component.loggedin).toBeTruthy();
+  });
+
+  it('should be ready to sign in after signing out', () => {
+    component.signOut();
+    vi.clearAllMocks();
 
     component.signIn();
-    expect(dialogMock.open).toHaveBeenCalled();
 
-    const mockSignInData = { name: 'testUser', password: 'testPassword' };
-    afterClosedSubject.next(mockSignInData);
-    afterClosedSubject.complete();
-    fixture.detectChanges();
-
+    expect(dialogService.open).toHaveBeenCalled();
+    expect(authService.signIn).toHaveBeenCalled();
     expect(component.loggedin).toBeTruthy();
   });
 
-  it('should call signOut() and reset user and loggedin properties when signOut() is called', () => {
-    jest.spyOn(mockRoute, 'navigate').mockImplementation(jest.fn());
+  it('should sign out, reset the user, and navigate home', () => {
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    component.signOut();
+
+    expect(authService.signOut).toHaveBeenCalled();
+    expect(component.user).toEqual({
+      attributes: {
+        status: 'Signed Out',
+      },
+    });
+    expect(navigate).toHaveBeenCalledWith(['/']);
+    expect(component.loggedin).toBeFalsy();
+  });
+
+  it('should sign out from the toolbar button', () => {
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const signOutButton = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('button'))
+      .find(button => button.textContent?.includes('Sign Out'));
+
+    signOutButton?.click();
+
+    expect(authService.signOut).toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledWith(['/']);
+    expect(component.loggedin).toBeFalsy();
+  });
+
+  it('should mark the component signed out when no user is logged in', () => {
     component.signOut();
 
     expect(component.user).toEqual({
-      "attributes": {
-        "status": "Signed Out",
-      }
+      attributes: {
+        status: 'Signed Out',
+      },
     });
-    expect(mockRoute.navigate).toHaveBeenCalled();
     expect(component.loggedin).toBeFalsy();
   });
-});
 
-describe('SignInDialogComponent', () => {
-  let component: SignInDialogComponent;
-  let fixture: ComponentFixture<SignInDialogComponent>;
+  it('should render the sign-in dialog template', () => {
+    const view = component.dialogTemplate.createEmbeddedView({});
+    view.detectChanges();
 
-  const mockDialogRef = {
-    close: jest.fn()
-  };
-  const mockData: User = { id: '1', name: 'Test User', attributes: {}, password: 'test', token: 'token' };
+    const text = view.rootNodes
+      .map(node => (node as HTMLElement).textContent ?? '')
+      .join(' ');
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [SignInDialogComponent],
-      imports: [
-        MatDialogModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatMenuModule,
-        NoopAnimationsModule,
-        FormsModule
-      ],
-      providers: [
-        { provide: MatDialogRef, useValue: mockDialogRef },
-        { provide: MAT_DIALOG_DATA, useValue: mockData }
-      ]
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(SignInDialogComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('should create', () => {
-    jest.spyOn(mockDialogRef, 'close').mockImplementation(jest.fn());
-    component.onNoClick();
-    expect(mockDialogRef.close).toHaveBeenCalled();
+    expect(text).toContain('Name:');
+    expect(text).toContain('Password:');
+    view.destroy();
   });
 });

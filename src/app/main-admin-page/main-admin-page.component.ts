@@ -10,7 +10,8 @@ import { Md5 } from 'ts-md5';
   selector: 'app-main-admin-page',
   templateUrl: './main-admin-page.component.html',
   styleUrls: ['./main-admin-page.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class MainAdminPageComponent implements OnInit {
   displayedColumns = [];

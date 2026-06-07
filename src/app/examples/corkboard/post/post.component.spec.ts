@@ -1,9 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonModule } from '@angular/common';
 
 import { PostComponent } from './post.component';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -20,7 +22,9 @@ describe('PostComponent', () => {
     declarations: [
         PostComponent
     ],
-    imports: [FormsModule,
+    imports: [CommonModule,
+        FormsModule,
+        MatButtonModule,
         MatCardModule,
         MatFormFieldModule,
         MatInputModule,
@@ -49,8 +53,8 @@ describe('PostComponent', () => {
   });
 
   it('should delete a post', () => {
-    const serviceSpy = jest.spyOn(component['service'], 'deleteRecord').mockReturnValue(of({}));
-    window.confirm = jest.fn(() => true); // simulate user confirming the delete action
+    const serviceSpy = vi.spyOn(component['service'], 'deleteRecord').mockReturnValue(of({}));
+    window.confirm = vi.fn(() => true); // simulate user confirming the delete action
 
     component.deletePost();
 
@@ -80,7 +84,7 @@ describe('PostComponent', () => {
   });
 
   it('should save a post', () => {
-    const serviceSpy = jest.spyOn(component['service'], 'saveRecord').mockReturnValue(of({}));
+    const serviceSpy = vi.spyOn(component['service'], 'saveRecord').mockReturnValue(of({}));
 
     component.savePost();
 
@@ -88,8 +92,28 @@ describe('PostComponent', () => {
     expect(component.edit).toBe(false);
   });
 
+  it('should save a post after entering edit mode', () => {
+    const serviceSpy = vi.spyOn(component['service'], 'saveRecord').mockReturnValue(of({}));
+    component.editPost();
+
+    component.savePost();
+
+    expect(serviceSpy).toHaveBeenCalledWith(component.post.id, component.post);
+    expect(component.edit).toBeFalsy();
+  });
+
+  it('should cancel editing after entering edit mode', () => {
+    component.editPost();
+    component.post.attributes.name = 'Changed';
+
+    component.cancelEdit();
+
+    expect(component.post.attributes.name).toBe('This is a post');
+    expect(component.edit).toBeFalsy();
+  });
+
   it('should create a post', () => {
-    const serviceSpy = jest.spyOn(component['service'], 'createRecord').mockReturnValue(of({}));
+    const serviceSpy = vi.spyOn(component['service'], 'createRecord').mockReturnValue(of({}));
 
     component.createPost();
 

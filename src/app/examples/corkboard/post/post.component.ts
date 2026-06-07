@@ -6,7 +6,8 @@ import { Post } from './post';
    selector: 'app-post',
    providers: [CollectionService],
    templateUrl: './post.component.html',
-   styleUrls: ['./post.component.scss']
+   styleUrls: ['./post.component.scss'],
+   standalone: false
 })
 export class PostComponent {
    @Input() post!: Post;

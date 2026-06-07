@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { AuthService, User } from './auth.service';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Md5 } from 'ts-md5';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('AuthService', () => {
@@ -60,7 +60,7 @@ describe('AuthService', () => {
   });
 
   it('should return instance stamp with getInstanceStamp', () => {
-    const spy = jest.spyOn(authService['http'], 'patch').mockReturnValue(of(''));
+    const spy = vi.spyOn(authService['http'], 'patch').mockReturnValue(of(''));
     authService.signOut();
     expect(authService.user).toBeFalsy();
     expect(authService.token).toBeFalsy();
@@ -71,8 +71,8 @@ describe('AuthService', () => {
     expect(authService.getInstanceStamp()).toBeTruthy();
   });
 
-  it('should return token with getToken', (done: jest.DoneCallback) => {
-    const spy = jest.spyOn(authService['http'], 'get').mockReturnValue(of(
+  it('should return token with getToken', async () => {
+    const spy = vi.spyOn(authService['http'], 'get').mockReturnValue(of(
       {
         data: [{
           id: 1,
@@ -83,29 +83,22 @@ describe('AuthService', () => {
         }]
       }
     ));
-    authService.signIn(dummyUser, 'pwd').subscribe({
-      next: (user) => {
-        expect(user).toBeDefined();
-        expect(authService.getToken()).toBeTruthy();
-        done();
-      }
-    });
+    const user = await firstValueFrom(authService.signIn(dummyUser, 'pwd'));
+
+    expect(user).toBeDefined();
     expect(authService.getToken()).toBeTruthy();
     expect(spy).toHaveBeenCalled();
   });
 
-  it('should return default admin when no users returned', (done: jest.DoneCallback) => {
-    const spy = jest.spyOn(authService['http'], 'get').mockReturnValue(of(
+  it('should return default admin when no users returned', async () => {
+    const spy = vi.spyOn(authService['http'], 'get').mockReturnValue(of(
       {
         data: []
       }
     ));
-    authService.signIn(dummyUser, 'pwd').subscribe({
-      next: (user) => {
-        expect(user).toBeDefined();
-        done();
-      }
-    });
+    const user = await firstValueFrom(authService.signIn(dummyUser, 'pwd'));
+
+    expect(user).toBeDefined();
     expect(spy).toHaveBeenCalled();
   });
 

@@ -1,16 +1,16 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../out-tsc/spec",
-    "baseUrl": "./",
+    "outDir": "./out-tsc/spec",
     "esModuleInterop": true,
     "types": [
-      "jest",
+      "vitest/globals",
       "node"
     ]
   },
   "include": [
-    "**/*.spec.ts",
+    "src/**/*.ts",
+    "src/**/*.spec.ts",
     "**/*.d.ts"
   ]
 }

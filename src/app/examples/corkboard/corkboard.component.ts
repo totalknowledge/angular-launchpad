@@ -6,7 +6,8 @@ import { CollectionService } from "../../persistence/collection.service";
    providers: [CollectionService],
    templateUrl: './corkboard.component.html',
    styleUrls: ['./corkboard.component.scss'],
-   encapsulation: ViewEncapsulation.None
+   encapsulation: ViewEncapsulation.None,
+   standalone: false
 })
 export class CorkboardComponent {
 

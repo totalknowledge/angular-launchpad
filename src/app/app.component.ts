@@ -6,7 +6,8 @@ import { DialogService } from './examples/dialog/dialog.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  standalone: false
 })
 export class AppComponent implements OnInit {
   user: User;
@@ -28,7 +29,7 @@ export class AppComponent implements OnInit {
     this.dialog.open(this.dialogTemplate, [{ label: 'Close', onClick: () => this.dialog.close() }], { name: '', password: '' }).subscribe(result => {
       // Process the result
       if (result) {
-        this.service.signIn(result['name'], result['password']).subscribe(result => {
+        this.service.signIn({ name: result['name'], attributes: {} }, result['password']).subscribe(result => {
           this.user = result;
           if (this.user.id) {
             this.loggedin = true;

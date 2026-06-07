@@ -59,11 +59,8 @@ const appRoutes: Routes = [
         MatDialogModule,
         MatSelectModule,
         FormsModule,
-        RouterModule.forRoot(appRoutes, { enableTracing: false } // <-- debugging purposes only
-        // <-- debugging purposes only
-        // <-- debugging purposes only
-        ),
-        environment.production
-            ? ServiceWorkerModule.register('/ngsw-worker.js')
-            : []], providers: [provideHttpClient(withInterceptorsFromDi())] })
+        RouterModule.forRoot(appRoutes, { enableTracing: false }),
+        ServiceWorkerModule.register('/ngsw-worker.js', {
+            enabled: environment.production
+        })], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { }

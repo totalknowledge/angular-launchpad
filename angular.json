@@ -54,20 +54,30 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ]
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
           },
-          "defaultConfiguration": ""
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "buildTarget": "angular-launchpad-cli:build"
+            "buildTarget": "angular-launchpad-cli:build:development"
           },
           "configurations": {
             "production": {
               "buildTarget": "angular-launchpad-cli:build:production"
+            },
+            "development": {
+              "buildTarget": "angular-launchpad-cli:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n",
@@ -75,11 +85,22 @@
             "buildTarget": "angular-launchpad-cli:build"
           }
         },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
+        "test": {
+          "builder": "@angular/build:unit-test",
           "options": {
-            "eslintConfig": ".eslintrc.js",
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+            "runner": "vitest",
+            "tsConfig": "tsconfig.spec.json",
+            "buildTarget": "angular-launchpad-cli:build:development",
+            "runnerConfig": "vitest.config.ts",
+            "include": ["src/**/*.spec.ts"],
+            "coverage": true,
+            "coverageReporters": ["html", "text"],
+            "coverageThresholds": {
+              "statements": 92,
+              "branches": 92,
+              "functions": 92,
+              "lines": 92
+            }
           }
         }
       }
@@ -94,7 +115,7 @@
       "prefix": "app"
     }
   },
-  "cli":{
-    "analytics":false
+  "cli": {
+    "analytics": false
   }
 }

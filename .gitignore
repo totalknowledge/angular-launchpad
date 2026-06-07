@@ -3,11 +3,14 @@ pickle_jar
 node_modules
 typings
 npm-debug.log
+.npm-cache
 *.pyc
 *.key
 *.crt
 *.csr
 _trial_temp*
 coverage
+htmlcov
+.coverage
 .angular
 

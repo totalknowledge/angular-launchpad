@@ -1,9 +1,12 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonModule } from '@angular/common';
+import { By } from '@angular/platform-browser';
 
 import { ThreadComponent } from './thread.component';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { PostComponent } from '../post/post.component';
 import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,12 +20,14 @@ describe('ThreadComponent', () => {
   let fixture: ComponentFixture<ThreadComponent>;
 
   beforeEach(async () => {
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
     declarations: [
         PostComponent,
         ThreadComponent
     ],
-    imports: [FormsModule,
+    imports: [CommonModule,
+        FormsModule,
+        MatButtonModule,
         MatFormFieldModule,
         MatInputModule,
         MatCardModule,
@@ -42,17 +47,35 @@ describe('ThreadComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize posts on ngOnInit', fakeAsync(() => {
+  it('should initialize posts on ngOnInit', () => {
     const postsStub: Post[] = [
       { id: '1', attributes: { title: 'Post 1', content: 'Post 1' } },
       { id: '2', attributes: { title: 'Post 2', content: 'Post 2' } }
     ];
-    jest.spyOn(component['service'], 'getCollection').mockReturnValue(of(postsStub));
+    vi.spyOn(component['service'], 'getCollection').mockReturnValue(of(postsStub));
 
     component.ngOnInit();
-    tick();
     expect(component.posts).toEqual(postsStub);
-  }));
+  });
+
+  it('should bind posts to child post components', () => {
+    const postsStub: Post[] = [
+      { id: '1', attributes: { name: 'First', post: 'Post 1' } },
+      { id: '2', attributes: { name: 'Second', post: 'Post 2' } }
+    ];
+    component.posts = [...postsStub];
+    component.newpost = { attributes: {} } as Post;
+    fixture.detectChanges();
+
+    const postComponents = fixture.debugElement.queryAll(By.directive(PostComponent));
+
+    expect(postComponents.length).toBe(3);
+    expect(postComponents[0].componentInstance.post).toEqual(postsStub[0]);
+    expect(postComponents[0].componentInstance.index).toBe(0);
+
+    postComponents[0].componentInstance.deleted.emit();
+    expect(component.posts).toEqual([postsStub[1]]);
+  });
 
   it('should delete post on onDelete', () => {
     component.posts = [
@@ -71,7 +94,7 @@ describe('ThreadComponent', () => {
       { id: '1', attributes: { title: 'Post 1', content: 'Post 1' } },
       { id: '2', attributes: { title: 'Post 2', content: 'Post 2' } }
     ];
-    jest.spyOn(component['service'], 'getCollection').mockReturnValue(of(postsStub));
+    vi.spyOn(component['service'], 'getCollection').mockReturnValue(of(postsStub));
 
     component.onCreate();
 

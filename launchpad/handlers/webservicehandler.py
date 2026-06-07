@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 import json
-import collections
+from collections.abc import Mapping
 
 from launchpad.adapters.picklejar import PickleJar
 
@@ -8,7 +8,7 @@ import tornado.web
 
 def deepupdate(dictinto, dictfrom):
     for attribute, value in dictfrom.items():
-        if isinstance(value, collections.Mapping):
+        if isinstance(value, Mapping):
             dictinto[attribute] = deepupdate(dictinto.get(attribute, {}), value)
         else:
             dictinto[attribute] = value
@@ -43,7 +43,7 @@ class WebServiceHandler(tornado.web.RequestHandler):
         new_id = save_obj["nextval"]
         if self.request.body:
             record = json.loads(self.request.body.decode('utf-8'))
-            if isinstance(record, dict) and type in list(record.keys()):
+            if isinstance(record, dict) and 'type' in record:
                 record_type = record['type']
             else:
                 record_type = pkl_jr.get_type()
@@ -65,6 +65,9 @@ class WebServiceHandler(tornado.web.RequestHandler):
             else:
                 response_obj = {"error":{"title":"Forbidden"}}
                 self.set_status(403)
+        elif not isinstance(record, dict):
+            response_obj = {"error":{"title":"Bad Request"}}
+            self.set_status(400)
         elif record_type != pkl_jr.get_type():
             response_obj = {"error":{"title":"Conflict"}}
             self.set_status(409)
