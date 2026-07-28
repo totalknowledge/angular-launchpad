@@ -1,15 +1,61 @@
 .thread-viewer {
-  margin-top: 1%;
-  margin-left: 20%;
-  margin-right: 20%;
+  display: grid;
+  gap: 24px;
+  width: min(920px, 100%);
+  margin: 0 auto;
+  padding: 24px 16px;
 }
-.thread-viewer mat-card {
-  margin: 1px;
+
+.thread-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+  padding-bottom: 16px;
 }
-.thread-viewer mat-card-title, mat-card-content {
-  padding: 8px;
-  background-color: #efeff5;
+
+.breadcrumb {
+  font-size: 16px;
+  font-weight: 500;
+  color: #555;
+
+  a {
+    color: var(--mat-sys-primary, #3f51b5);
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  span {
+    color: #111;
+    font-weight: 600;
+  }
 }
+
+.reply-section {
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px dashed rgba(0, 0, 0, 0.12);
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #444;
+  }
+}
+
+.posts-list {
+  display: grid;
+  gap: 16px;
+}
+
 .thread-viewer mat-form-field {
   width: 100%;
 }

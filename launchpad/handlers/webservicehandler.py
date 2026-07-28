@@ -2,7 +2,7 @@ from __future__ import absolute_import
 import json
 from collections.abc import Mapping
 
-from launchpad.adapters.picklejar import PickleJar
+from launchpad.adapters.wardrobejar import WardrobeJar
 
 import tornado.web
 
@@ -16,14 +16,19 @@ def deepupdate(dictinto, dictfrom):
 
 class WebServiceHandler(tornado.web.RequestHandler):
     """ Return arbitrary api calls in json format. """
+    def set_default_headers(self):
+        self.set_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "0")
+
     def get(self, path):
         # Grab the REQUEST_METHOD collection and id if exists from the Request
-        pkl_jr = PickleJar(path)
-        pkl_id = pkl_jr.get_id()
-        if pkl_id:
+        jar = WardrobeJar(path)
+        record_id = jar.get_id()
+        if record_id:
             try:
-                result = pkl_jr.get_pickle()
-                response_obj = {"data":result["data"][str(pkl_id)]}
+                result = jar.get_collection()
+                response_obj = {"data":result["data"][str(record_id)]}
                 self.set_status(200)
                 self.write(response_obj)
                 self.set_header("Content-Type", "application/vnd.api+json")
@@ -31,32 +36,32 @@ class WebServiceHandler(tornado.web.RequestHandler):
                 response_obj = {"message":"Record not found."}
                 self.set_status(404)
         else:
-            response_obj = {"data":list(pkl_jr.get_pickle()["data"].values())}
+            response_obj = {"data":list(jar.get_collection()["data"].values())}
             response_obj['data'].sort(key = lambda x: x['id'])
             self.set_status(200)
             self.write(response_obj)
             self.set_header("Content-Type", "application/vnd.api+json")
 
     def post(self, path):
-        pkl_jr = PickleJar(path)
-        save_obj = pkl_jr.get_pickle()
+        jar = WardrobeJar(path)
+        save_obj = jar.get_collection()
         new_id = save_obj["nextval"]
         if self.request.body:
             record = json.loads(self.request.body.decode('utf-8'))
             if isinstance(record, dict) and 'type' in record:
                 record_type = record['type']
             else:
-                record_type = pkl_jr.get_type()
+                record_type = jar.get_type()
         else:
             record = ""
             record_type = False
-        if isinstance(record, dict) and record_type == pkl_jr.get_type():
-            if not pkl_jr.get_id():
-                record.update({"id":str(save_obj["nextval"]),"type":pkl_jr.get_type()})
+        if isinstance(record, dict) and record_type == jar.get_type():
+            if not jar.get_id():
+                record.update({"id":str(save_obj["nextval"]),"type":jar.get_type()})
                 save_obj["data"][str(new_id)] = record
                 save_obj["nextval"] = save_obj["nextval"] + 1
                 try:
-                    pkl_jr.save_pickle(save_obj)
+                    jar.save_collection(save_obj)
                     response_obj = {"data":save_obj["data"][str(new_id)]}
                     self.set_status(201)
                 except:
@@ -68,7 +73,7 @@ class WebServiceHandler(tornado.web.RequestHandler):
         elif not isinstance(record, dict):
             response_obj = {"error":{"title":"Bad Request"}}
             self.set_status(400)
-        elif record_type != pkl_jr.get_type():
+        elif record_type != jar.get_type():
             response_obj = {"error":{"title":"Conflict"}}
             self.set_status(409)
         else:
@@ -77,58 +82,58 @@ class WebServiceHandler(tornado.web.RequestHandler):
         self.write(response_obj)
 
     def put(self, path):
-        pkl_jr = PickleJar(path)
-        pkl_id = pkl_jr.get_id()
+        jar = WardrobeJar(path)
+        record_id = jar.get_id()
 
-        save_obj = pkl_jr.get_pickle()
-        save_obj["data"][str(pkl_id)] = json.loads(self.request.body.decode('utf-8'))
+        save_obj = jar.get_collection()
+        save_obj["data"][str(record_id)] = json.loads(self.request.body.decode('utf-8'))
 
-        response_obj = {"data":{str(pkl_id):save_obj["data"][str(pkl_id)]}}
-        pkl_jr.save_pickle(save_obj)
+        response_obj = {"data":{str(record_id):save_obj["data"][str(record_id)]}}
+        jar.save_collection(save_obj)
         self.write(response_obj)
 
     def delete(self, path):
-        pkl_jr = PickleJar(path)
-        pkl_id = pkl_jr.get_id()
+        jar = WardrobeJar(path)
+        record_id = jar.get_id()
 
-        if pkl_id:
-            save_obj = pkl_jr.get_pickle()
+        if record_id:
+            save_obj = jar.get_collection()
             try:
-                del save_obj["data"][str(pkl_id)]
-                pkl_jr.save_pickle(save_obj)
+                del save_obj["data"][str(record_id)]
+                jar.save_collection(save_obj)
                 self.set_status(204)
             except:
                 self.set_status(404)
         else:
-            pkl_jr.save_pickle({"nextval":100, "data":{}})
+            jar.save_collection({"nextval":100, "data":{}})
             self.set_status(204)
 
     def patch(self, path):
-        pkl_jr = PickleJar(path)
-        pkl_id = pkl_jr.get_id()
-        save_obj = pkl_jr.get_pickle()
-        temp_obj = save_obj["data"][str(pkl_id)]
+        jar = WardrobeJar(path)
+        record_id = jar.get_id()
+        save_obj = jar.get_collection()
+        temp_obj = save_obj["data"][str(record_id)]
         merge_obj = json.loads(self.request.body.decode('utf-8'))
         deepupdate(temp_obj, merge_obj)
-        save_obj["data"][str(pkl_id)] = temp_obj
-        response_obj = {"data":{str(pkl_id):temp_obj}}
-        pkl_jr.save_pickle(save_obj)
+        save_obj["data"][str(record_id)] = temp_obj
+        response_obj = {"data":{str(record_id):temp_obj}}
+        jar.save_collection(save_obj)
         self.write(response_obj)
 
     def head(self, path):
-        pkl_jr = PickleJar(path)
-        pkl_id = pkl_jr.get_id()
-        if pkl_id:
+        jar = WardrobeJar(path)
+        record_id = jar.get_id()
+        if record_id:
             try:
-                result = pkl_jr.get_pickle()
-                response_obj = {"data":result["data"][str(pkl_id)]}
+                result = jar.get_collection()
+                response_obj = {"data":result["data"][str(record_id)]}
                 self.set_header("Content-Type", "application/vnd.api+json")
                 self.set_status(200)
             except:
                 response_obj = {"message":"Record not found."}
                 self.set_status(404)
         else:
-            response_obj = {"data":list(pkl_jr.get_pickle()["data"].values())}
+            response_obj = {"data":list(jar.get_collection()["data"].values())}
             self.set_header("Content-Type", "application/vnd.api+json")
             self.set_status(200)
 

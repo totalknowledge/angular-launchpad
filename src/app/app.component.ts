@@ -1,13 +1,29 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { Router } from "@angular/router";
 import { AuthService, User } from './persistence/auth.service';
 import { DialogService } from './examples/dialog/dialog.service';
 
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { NgIf } from '@angular/common';
+
 @Component({
   selector: 'app-root',
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    FormsModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatMenuModule,
+    NgIf,
+  ],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  standalone: false
+  styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
   user: User;

@@ -1,15 +1,13 @@
 from __future__ import absolute_import
-import os
 import sys
 
 import tornado.web
 from launchpad import settings
-from launchpad.adapters.picklejar import PickleJar
+from launchpad.adapters.wardrobejar import WardrobeJar
 
-# Make pickle_jar if it doesn't exist
-if not os.path.exists(os.path.join(settings.doc_dir, "pickle_jar")):
-        os.makedirs(os.path.join(settings.doc_dir, "pickle_jar"))
-        pkl_jr = PickleJar("user")
+# Seed core collections when they do not exist yet.
+jar = WardrobeJar("user")
+if not jar.get_collection().get("data"):
         usersInit = {"data": { "100": {
                             "attributes": {
                                 "userName": "admin",
@@ -23,8 +21,9 @@ if not os.path.exists(os.path.join(settings.doc_dir, "pickle_jar")):
                             "id": "100"}},
                         "nextval": 101
                     }
-        pkl_jr.save_pickle(usersInit)
-        pkl_jr = PickleJar("schema")
+        jar.save_collection(usersInit)
+jar = WardrobeJar("schema")
+if not jar.get_collection().get("data"):
         userSchema = {"data": { "100": {
                           "id": "100",
                           "type": "collection",
@@ -158,7 +157,7 @@ if not os.path.exists(os.path.join(settings.doc_dir, "pickle_jar")):
                         }},
                         "nextval": 101
                     }
-        pkl_jr.save_pickle(userSchema)
+        jar.save_collection(userSchema)
 
 # Late import
 from launchpad.handlers import MainHandler

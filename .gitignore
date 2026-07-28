@@ -1,5 +1,6 @@
 www
 pickle_jar
+wardrobe_data
 node_modules
 typings
 npm-debug.log
@@ -13,4 +14,6 @@ coverage
 htmlcov
 .coverage
 .angular
-
+package-lock.json
+**/__pycache__
+AGENTS.md

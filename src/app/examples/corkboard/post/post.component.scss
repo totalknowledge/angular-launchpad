@@ -1,93 +1,68 @@
-/* Basic Card Styles */
-.mat-card {
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-  margin: 20px;
-  padding: 15px;
-  background: #fff;
+:host {
+  display: block;
 }
 
-.mat-card-title {
-  font-size: 24px;
-  margin-bottom: 15px;
+mat-card {
+  border-radius: 8px;
+  margin: 0;
+  padding: 16px;
 }
 
-.mat-card-content {
+mat-card-title {
+  display: block;
+  font-size: 20px;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+mat-card-content {
+  display: block;
   font-size: 14px;
-  margin-bottom: 15px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  white-space: pre-wrap;
 }
 
-.mat-card-actions {
+mat-card-actions {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   justify-content: flex-start;
   align-items: center;
-  margin-top: 15px;
+  padding: 0;
 }
 
-/* Button Styles */
-button[mat-raised-button], a[mat-button] {
-  border: none;
-  border-radius: 4px;
-  padding: 10px 15px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
-  text-align: center;
-  text-decoration: none;
-  margin-right: 8px;
-}
-
-button[mat-raised-button] {
-  background-color: #3f51b5;
-  color: white;
-}
-
-button[mat-raised-button][color="primary"] {
-  background-color: #3f51b5;
-}
-
-button[mat-raised-button][color="accent"] {
-  background-color: #ff4081;
-}
-
-a[mat-button] {
-  color: #3f51b5;
-  background-color: transparent;
-}
-
-button[mat-raised-button]:hover, a[mat-button]:hover {
-  background-color: #303f9f;
-}
-
-/* Form Field Styles */
-.mat-form-field {
+mat-form-field {
   display: block;
-  margin-bottom: 15px;
-}
-
-.mat-form-field input[type="text"],
-.mat-form-field textarea {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
 }
 
-.mat-form-field input[type="text"]:focus,
-.mat-form-field textarea:focus {
-  outline: none;
-  border-color: #3f51b5;
+textarea {
+  min-height: 96px;
+  resize: vertical;
 }
 
-::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: #9e9e9e;
-  opacity: 1; /* Firefox */
+.post-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding-bottom: 8px;
 }
 
-:-ms-input-placeholder { /* Internet Explorer 10-11 */
-  color: #9e9e9e;
+.post-title-block {
+  min-width: 0;
+  flex: 1;
 }
 
-::-ms-input-placeholder { /* Microsoft Edge */
-  color: #9e9e9e;
+.post-author {
+  font-weight: 500;
+}
+
+.post-time {
+  font-size: 12px;
+  color: #777;
+  white-space: nowrap;
 }

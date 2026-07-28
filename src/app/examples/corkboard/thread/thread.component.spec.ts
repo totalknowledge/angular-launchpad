@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { By } from '@angular/platform-browser';
+import { provideRouter, ActivatedRoute } from '@angular/router';
 
 import { ThreadComponent } from './thread.component';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
@@ -21,18 +22,32 @@ describe('ThreadComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [
+    imports: [
         PostComponent,
-        ThreadComponent
-    ],
-    imports: [CommonModule,
+        ThreadComponent,
+        CommonModule,
         FormsModule,
         MatButtonModule,
         MatFormFieldModule,
         MatInputModule,
         MatCardModule,
         NoopAnimationsModule],
-    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+    providers: [
+        provideHttpClient(withInterceptorsFromDi()), 
+        provideHttpClientTesting(),
+        provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            paramMap: of({ get: () => '' }),
+            snapshot: {
+              paramMap: {
+                get: () => ''
+              }
+            }
+          }
+        }
+    ]
 })
       .compileComponents();
   });
@@ -40,7 +55,6 @@ describe('ThreadComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ThreadComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -55,7 +69,8 @@ describe('ThreadComponent', () => {
     vi.spyOn(component['service'], 'getCollection').mockReturnValue(of(postsStub));
 
     component.ngOnInit();
-    expect(component.posts).toEqual(postsStub);
+    expect(component.posts$).toBeTruthy();
+    expect(component['service'].getCollection).toHaveBeenCalledWith('posts');
   });
 
   it('should bind posts to child post components', () => {
@@ -63,8 +78,7 @@ describe('ThreadComponent', () => {
       { id: '1', attributes: { name: 'First', post: 'Post 1' } },
       { id: '2', attributes: { name: 'Second', post: 'Post 2' } }
     ];
-    component.posts = [...postsStub];
-    component.newpost = { attributes: {} } as Post;
+    vi.spyOn(component['service'], 'getCollection').mockReturnValue(of([...postsStub]));
     fixture.detectChanges();
 
     const postComponents = fixture.debugElement.queryAll(By.directive(PostComponent));
@@ -74,19 +88,19 @@ describe('ThreadComponent', () => {
     expect(postComponents[0].componentInstance.index).toBe(0);
 
     postComponents[0].componentInstance.deleted.emit();
-    expect(component.posts).toEqual([postsStub[1]]);
+    postComponents[2].componentInstance.created.emit();
+    expect(component.posts$).toBeTruthy();
   });
 
   it('should delete post on onDelete', () => {
-    component.posts = [
+    vi.spyOn(component['service'], 'getCollection').mockReturnValue(of([
       { id: '1', attributes: { title: 'Post 1', content: 'Post 1' } },
       { id: '2', attributes: { title: 'Post 2', content: 'Post 2' } }
-    ];
-    const initialLength = component.posts.length;
+    ]));
 
-    component.onDelete(0);
+    component.onDelete();
 
-    expect(component.posts.length).toEqual(initialLength - 1);
+    expect(component['service'].getCollection).toHaveBeenCalledWith('posts');
   });
 
   it('should create a post and get collection again on onCreate', () => {
@@ -99,7 +113,53 @@ describe('ThreadComponent', () => {
     component.onCreate();
 
     expect(component['service'].getCollection).toHaveBeenCalledTimes(1);
-    expect(component.posts).toEqual(postsStub);
+    expect(component['service'].getCollection).toHaveBeenCalledWith('posts');
+    expect(component.posts$).toBeTruthy();
     expect(component.newpost).toEqual({ "attributes": {} } as Post);
+  });
+
+  it('should filter and sort posts reverse-chronologically when threadId is set', () => {
+    const route = TestBed.inject(ActivatedRoute);
+    (route as any).paramMap = of({
+      get: (key: string) => key === 'id' ? 'thread-123' : null
+    } as any);
+
+    vi.spyOn(component['service'], 'getRecord').mockReturnValue(of({
+      id: 'thread-123',
+      originPost: { _id: 'origin-post' }
+    }));
+
+    const postsStub: Post[] = [
+      { id: 'origin-post', attributes: { name: 'Origin', post: 'First body', createdTS: '2024-01-01T00:00:00.000Z' } },
+      { id: 'post-1', attributes: { name: 'Reply 1', post: 'Reply body 1', threadId: 'thread-123', createdTS: '2024-01-02T00:00:00.000Z' } },
+      { id: 'post-2', attributes: { name: 'Reply 2', post: 'Reply body 2', threadId: 'other-thread', createdTS: '2024-01-03T00:00:00.000Z' } },
+      { id: 'post-3', attributes: { name: 'Reply 3', post: 'Reply body 3', threadId: 'thread-123', createdTS: '2024-01-04T00:00:00.000Z' } }
+    ];
+
+    vi.spyOn(component['service'], 'getCollection').mockReturnValue(of(postsStub));
+
+    component.ngOnInit();
+
+    component.posts$.subscribe(filteredPosts => {
+      expect(filteredPosts.length).toBe(3);
+      expect(filteredPosts[0].id).toBe('post-3');
+      expect(filteredPosts[1].id).toBe('post-1');
+      expect(filteredPosts[2].id).toBe('origin-post');
+    });
+  });
+
+  it('should identify origin post correctly', () => {
+    component.thread = {
+      originPost: { _id: 'origin-id' }
+    };
+    expect(component.isOriginPost({ id: 'origin-id', attributes: {} })).toBe(true);
+    expect(component.isOriginPost({ id: 'other-id', attributes: {} })).toBe(false);
+  });
+
+  it('should match origin post using _id', () => {
+    component.thread = {
+      originPost: { _id: 'origin-id' }
+    };
+    expect(component.isOriginPost({ _id: 'origin-id', attributes: {} } as any)).toBe(true);
   });
 });

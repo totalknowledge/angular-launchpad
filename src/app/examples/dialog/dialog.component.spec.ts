@@ -31,8 +31,8 @@ describe('DialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DialogComponent, DialogHostComponent],
-      imports: [CommonModule]
+      declarations: [DialogHostComponent],
+      imports: [CommonModule, DialogComponent]
     })
     .compileComponents();
     
@@ -64,8 +64,8 @@ describe('DialogComponent', () => {
 
     expect(hostFixture.componentInstance.content).toBeTruthy();
 
-    component.content = hostFixture.componentInstance.content;
-    component.buttons = hostFixture.componentInstance.buttons;
+    fixture.componentRef.setInput('content', hostFixture.componentInstance.content);
+    fixture.componentRef.setInput('buttons', hostFixture.componentInstance.buttons);
     fixture.detectChanges();
 
     const root = fixture.nativeElement as HTMLElement;

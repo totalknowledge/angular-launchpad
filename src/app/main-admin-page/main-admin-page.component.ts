@@ -1,17 +1,44 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatCardModule } from '@angular/material/card';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+
 import { CollectionService } from "../persistence/collection.service";
 import { AuthService, User } from "../persistence/auth.service";
 import { Md5 } from 'ts-md5';
 
 @Component({
   selector: 'app-main-admin-page',
+  imports: [
+    NgFor,
+    NgIf,
+    NgSwitch,
+    NgSwitchCase,
+    NgSwitchDefault,
+    DatePipe,
+    FormsModule,
+    MatTabsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatCardModule,
+    MatSelectModule,
+    MatButtonModule,
+  ],
   templateUrl: './main-admin-page.component.html',
-  styleUrls: ['./main-admin-page.component.scss'],
+  styleUrl: './main-admin-page.component.scss',
   encapsulation: ViewEncapsulation.None,
-  standalone: false
 })
 export class MainAdminPageComponent implements OnInit {
   displayedColumns = [];
@@ -30,19 +57,18 @@ export class MainAdminPageComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
 
   constructor(private service: CollectionService, private auth: AuthService) {
-    this.service.setCollection("user");
     this.users = [];
     this.user = createNewUser();
   }
   ngOnInit() {
-    this.service.getCollection()
+    this.service.getCollection("user")
       .subscribe(users => {
         this.users = users;
         this.dataSource = new MatTableDataSource(this.users);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
       });
-    this.service.getRecord("100", "schema")
+    this.service.getRecord("schema", "100")
       .subscribe({
         next: res => {
           const read = [];
@@ -91,7 +117,7 @@ export class MainAdminPageComponent implements OnInit {
   }
 
   patchUser() {
-    this.service.patchRecord(this.user.id, this.user).subscribe({
+    this.service.patchRecord("user", this.user.id, this.user).subscribe({
       next: () => {
         this.edit = false;
       }
@@ -100,7 +126,7 @@ export class MainAdminPageComponent implements OnInit {
 
   resetpassword() {
     this.user.attributes.password = Md5.hashStr("Friday");
-    this.service.patchRecord(this.user.id, {
+    this.service.patchRecord("user", this.user.id, {
       "attributes": {
         "password": this.user.attributes.password
       }
@@ -111,7 +137,7 @@ export class MainAdminPageComponent implements OnInit {
   }
 
   createUser() {
-    this.service.createRecord(this.user).subscribe(
+    this.service.createRecord("user", this.user).subscribe(
       result => {
         this.user.id = result.id;
         this.users.push(this.user);

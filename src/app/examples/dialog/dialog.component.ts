@@ -1,9 +1,14 @@
+import { NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
 import { Component, Input, Output, EventEmitter, TemplateRef, ViewChild } from '@angular/core';
 
 @Component({
+  imports: [
+    NgFor,
+    NgIf,
+    NgTemplateOutlet,
+  ],
   selector: 'app-dialog',
-  templateUrl: './dialog.component.html',
-  standalone: false
+  templateUrl: './dialog.component.html'
 })
 export class DialogComponent {
   @Input() content!: TemplateRef<unknown>;

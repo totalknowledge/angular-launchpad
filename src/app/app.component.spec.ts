@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { By } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
@@ -56,8 +57,9 @@ describe('AppComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AppComponent, EmptyRouteComponent],
+      declarations: [EmptyRouteComponent],
       imports: [
+        AppComponent,
         CommonModule,
         FormsModule,
         MatButtonModule,
@@ -138,6 +140,30 @@ describe('AppComponent', () => {
     expect(component.loggedin).toBeFalsy();
   });
 
+  it('should sign in from the toolbar button', () => {
+    authService.user = { attributes: {} } as User;
+    const signedOutFixture = TestBed.createComponent(AppComponent);
+    const signedOutComponent = signedOutFixture.componentInstance;
+    signedOutFixture.detectChanges();
+    authService.signIn.mockReturnValueOnce(of({
+      id: '2',
+      name: 'Signed In User',
+      attributes: { permission: 'user' },
+      token: 'signedInToken',
+    } as User));
+    vi.clearAllMocks();
+
+    const signInButton = signedOutFixture.debugElement.queryAll(By.css('button'))
+      .find(button => button.nativeElement.textContent.includes('Sign In'));
+
+    expect(signInButton).toBeTruthy();
+    signInButton?.triggerEventHandler('click');
+
+    expect(dialogService.open).toHaveBeenCalled();
+    expect(authService.signIn).toHaveBeenCalled();
+    expect(signedOutComponent.loggedin).toBeTruthy();
+  });
+
   it('should mark the component signed out when no user is logged in', () => {
     component.signOut();
 
@@ -159,6 +185,14 @@ describe('AppComponent', () => {
 
     expect(text).toContain('Name:');
     expect(text).toContain('Password:');
+    const form = view.rootNodes.find(
+      node => (node as HTMLElement).tagName === 'FORM',
+    ) as HTMLFormElement;
+    const inputs = Array.from(form.querySelectorAll('input'));
+    inputs[0].value = 'templateUser';
+    inputs[0].dispatchEvent(new Event('input', { bubbles: true }));
+    inputs[1].value = 'templatePassword';
+    inputs[1].dispatchEvent(new Event('input', { bubbles: true }));
     view.destroy();
   });
 });

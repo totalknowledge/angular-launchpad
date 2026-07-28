@@ -1,5 +1,13 @@
   <mat-card id={{post.id}} *ngIf="post.id && !edit">
-    <mat-card-title *ngIf="!index">{{post.attributes.name}}</mat-card-title>
+    <div class="post-header">
+      <div class="post-title-block">
+        <mat-card-title *ngIf="!index">{{post.attributes.name}}</mat-card-title>
+        <mat-card-subtitle *ngIf="index" class="post-author">By {{post.attributes.name || 'Anonymous'}}</mat-card-subtitle>
+      </div>
+      <time *ngIf="post.attributes.createdTS" class="post-time">
+        {{ post.attributes.createdTS | date:'medium' }}
+      </time>
+    </div>
     <mat-card-content>{{post.attributes.post}}</mat-card-content>
     <mat-card-actions>
       <button mat-raised-button color="accent">Quote</button>

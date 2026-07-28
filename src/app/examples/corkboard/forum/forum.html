@@ -1,0 +1,69 @@
+<div class="forum-board">
+  <header class="forum-board-header">
+    <h1>Corkboard</h1>
+    <button mat-raised-button color="primary" (click)="showNewForumForm()">New Forum</button>
+  </header>
+
+  @if (creatingForum) {
+    <mat-card class="forum-form">
+      <mat-card-title>New Forum</mat-card-title>
+      <mat-card-content>
+        <mat-form-field>
+          <input matInput placeholder="Forum name" name="forumName" [(ngModel)]="newForum.name">
+        </mat-form-field>
+        <mat-form-field>
+          <textarea matInput placeholder="Description" name="forumDescription" [(ngModel)]="newForum.description"></textarea>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="createForum()">Create Forum</button>
+        <button mat-button (click)="cancelNewForum()">Cancel</button>
+      </mat-card-actions>
+    </mat-card>
+  }
+
+  @for (forum of forums; track forum.id || forum._id || $index) {
+    <mat-card class="forum-card">
+      <mat-card-header>
+        <div class="forum-title-block">
+          <mat-card-title>{{ forum.name || 'Untitled forum' }}</mat-card-title>
+          @if (forum.description) {
+            <mat-card-subtitle>{{ forum.description }}</mat-card-subtitle>
+          }
+        </div>
+        <button mat-button color="primary" (click)="showNewThreadForm(forum)">New</button>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (creatingThreadFor === forumKey(forum)) {
+          <div class="thread-form">
+            <app-post
+              [post]="originPostDrafts[forumKey(forum)]"
+              [index]="threadsForForum(forum).length"
+              (created)="createThread(forum, $event)"
+              (canceled)="cancelNewThread(forum)">
+            </app-post>
+          </div>
+        }
+
+        <div class="thread-list" [class.thread-list-empty]="threadsForForum(forum).length === 0">
+          @for (thread of threadsForForum(forum); track thread.id || thread._id || $index) {
+            <div class="thread-row" [routerLink]="['/examples/corkboard/thread', thread.id || thread._id]">
+              <div>
+                <h2>{{ thread.title || 'Untitled thread' }}</h2>
+                @if (thread.creator) {
+                  <p>Started by {{ thread.creator }}</p>
+                }
+              </div>
+              @if (thread.updatedTS || thread.createdTS) {
+                <time>
+                  {{ (thread.updatedTS || thread.createdTS) | date:'medium' }}
+                </time>
+              }
+            </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

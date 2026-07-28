@@ -30,7 +30,6 @@ describe('MainAdminPageComponent', () => {
     createRecord: vi.fn().mockReturnValue(of({ id: '1', attributes: [] })),
     getCollection: vi.fn().mockReturnValue(of([{ id: '1' }])),
     getRecord: vi.fn().mockReturnValue(of({ id: '1', attributes: [{ read: true, create: true, values: [] }] })),
-    setCollection: vi.fn().mockReturnValue(of(true)),
     patchRecord: vi.fn().mockReturnValue(of(null))
   };
   const renderUser = {
@@ -43,10 +42,9 @@ describe('MainAdminPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [
-        MainAdminPageComponent
-    ],
-    imports: [CommonModule,
+    imports: [
+        MainAdminPageComponent,
+        CommonModule,
         FormsModule,
         MatButtonModule,
         MatCardModule,
@@ -133,8 +131,37 @@ describe('MainAdminPageComponent', () => {
 
     const root = fixture.nativeElement as HTMLElement;
     expect(root.querySelector('mat-select')).toBeTruthy();
-    expect(root.querySelector('input[placeholder="First Name"]')).toBeTruthy();
+    const firstNameInput = root.querySelector('input[placeholder="First Name"]') as HTMLInputElement;
+    expect(firstNameInput).toBeTruthy();
+    firstNameInput.value = 'Updated';
+    firstNameInput.dispatchEvent(new Event('input'));
+    expect(component.user.attributes.firstName).toBe('Updated');
     expect(root.textContent).toContain('Create');
+  });
+
+  it('ngOnInit should skip columns when schema permissions are denied', () => {
+    vi.mocked(service.getCollection).mockReturnValueOnce(of([]));
+    vi.mocked(service.getRecord).mockReturnValueOnce(of({
+      id: 'schema',
+      read: true,
+      create: true,
+      attributes: {
+        secret: {
+          order: 0,
+          read: false,
+          create: false,
+          label: 'Secret',
+          type: 'text'
+        }
+      }
+    }));
+    vi.spyOn(auth, 'hasPermission').mockReturnValue(false);
+
+    component.ngOnInit();
+
+    expect(component.displayedColumns).toEqual([]);
+    expect(component.editableColumns).toEqual([]);
+    expect(component.fieldSelections['secret']).toBeUndefined();
   });
 
   it('should render display actions for an existing user', () => {
